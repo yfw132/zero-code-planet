@@ -3,25 +3,25 @@ import Layout from "../layout/index.vue";
 
 export const constantRoutes = [
   {
-    path: "/",
+    path: "/workbench",
     name: "Layout",
-    redirect: "/index",
+    redirect: "/workbench/index",
     component: Layout,
     children: [
       {
-        path: "/index",
-        component: () => import("../pages/index/index.vue"),
+        path: "/workbench/index",
+        component: () => import("../pages/workbench/index.vue"),
         meta: { title: "项目管理", icon: "Money", roles: ["user"] },
         hidden: false,
       },
       {
-        path: "/config",
-        component: () => import("../pages/config/index.vue"),
+        path: "/workbench/config",
+        component: () => import("../pages/workbench/index.vue"),
         meta: { title: "项目配置", icon: "Money", roles: ["user"] },
         hidden: false,
       },
       {
-        path: "/preview",
+        path: "/workbench/preview",
         component: () => import("../pages/preview/index.vue"),
         meta: { title: "页面预览", icon: "Money", roles: ["user"] },
         hidden: false,
