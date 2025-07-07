@@ -1,20 +1,21 @@
 <template>
-  <div class="app">
-    <!-- <navbar /> -->
+  <div class="workbench">
+    <navbar />
     <app-main />
   </div>
 </template>
 
 <script setup lang="ts">
-import Navbar from "./components/Navbar.vue";
-import AppMain from "./components/AppMain.vue";
+import Navbar from "./Navbar.vue";
+import AppMain from "./AppMain.vue";
 </script>
 
 <style scoped>
-.app {
+.workbench {
+  height: 100vh;
   display: flex;
+  flex-direction: column;
   width: 100%;
-  position: relative;
   background: url(src/assets/workspace_bg.png) 0% 0% / 100% no-repeat;
 }
 </style>

@@ -264,12 +264,11 @@ const quickSteps = ref([
 
 // 方法
 const startAiGeneration = () => {
-  router.push("/config");
+  router.push("/workbench");
 };
 
 const viewDemo = () => {
-  // 播放演示视频或跳转到演示页面
-  console.log("查看演示");
+  router.push("/workbench");
 };
 
 const viewProject = (project: any) => {
