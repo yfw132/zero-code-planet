@@ -1,0 +1,78 @@
+.preview {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  height: 100vh;
+  overflow: hidden;
+  width: 100%;
+
+  .page-list {
+    .clicked {
+      background-color: #409EFF !important;
+      color: #fff;
+    }
+
+    .page-item {
+      padding: 12px;
+      border-radius: 6px;
+      margin: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      background-color: #fff;
+      font-weight: 600;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      &:hover {
+        background-color: rgb(217, 236, 255);
+      }
+    }
+  }
+
+
+
+  .page-config {
+    margin: 12px;
+    width: calc(100% - 24px);
+    height: calc(100% - 24px);
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.4);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .page-header {
+      background-color: rgba(255, 255, 255, 0.6);
+      border-radius: 6px 6px 0 0;
+      padding: 12px;
+
+      .page-header-title {
+        font-size: 16px;
+        font-weight: 600;
+        display: flex !important;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+
+    .page-main {
+      padding: 24px;
+      overflow: auto;
+
+      .column-item {
+        padding: 12px;
+        margin-bottom: 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 120px 1fr 60px;
+        width: auto;
+        gap: 24px;
+        background-color: rgba(255, 255, 255, 0.6);
+        cursor: pointer;
+        border-radius: 6px;
+      }
+    }
+  }
+}

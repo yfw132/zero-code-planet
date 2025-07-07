@@ -21,7 +21,7 @@
             <div class="project-description">{{ project.description }}</div>
             <div class="project-footer">
               <el-tag>2024-04-23</el-tag>
-              <el-button size="small">编辑项目</el-button>
+              <el-button size="small" @click="goPage('config')">编辑项目</el-button>
             </div>
           </el-card>
         </div>
@@ -32,7 +32,13 @@
 
 <script setup lang="ts">
 import { Promotion } from '@element-plus/icons-vue'
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+const goPage = (path:string) => {
+  router.push(path)
+}
 
 const projects = ref([
   { id: 1, name: '项目A', description: '这是项目A的描述', status: '进行中' },
