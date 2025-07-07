@@ -1,11 +1,8 @@
 <template>
-  <div class="preview">
-  </div>
+  <div class="preview"></div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
-</script>
+<script setup lang="ts"></script>
 
 <style scoped lang="scss">
 .preview {

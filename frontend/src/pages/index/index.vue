@@ -140,17 +140,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import {
-  MagicStick,
-  VideoPlay,
-  Lightning,
-  Cpu,
-  DataAnalysis,
-  Setting,
-  Picture,
-  Document,
-  Monitor,
-} from "@element-plus/icons-vue";
+import { MagicStick, VideoPlay } from "@element-plus/icons-vue";
 
 const router = useRouter();
 
