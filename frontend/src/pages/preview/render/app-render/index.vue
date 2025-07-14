@@ -133,7 +133,7 @@ import {
 import { ElMessage } from "element-plus";
 
 import PageRender from "../page-render/index.vue";
-import { testAppSchema } from "../../test";
+import { testAppSchema, DEFAULT_APP_ID, DEFAULT_PAGE_ID } from "../../test";
 
 const route = useRoute();
 const router = useRouter();
@@ -150,7 +150,11 @@ const userAvatar = ref(
 
 // 计算属性
 const currentPageName = computed(() => {
-  return (route.query.page as string) || appSchema.pages[0].pageName;
+  const pageId = (route.params.pageId as string) || DEFAULT_PAGE_ID;
+
+  // 根据pageId找到对应的页面名称
+  const page = appSchema.pages.find((p) => p.pageid === pageId);
+  return page ? page.pageName : appSchema.pages[0].pageName;
 });
 
 const currentPageDescription = computed(() => {
@@ -161,9 +165,8 @@ const currentPageDescription = computed(() => {
 });
 
 const activeMenuIndex = computed(() => {
-  const index = appSchema.pages.findIndex(
-    (page) => page.pageName === currentPageName.value
-  );
+  const pageId = (route.params.pageId as string) || DEFAULT_PAGE_ID;
+  const index = appSchema.pages.findIndex((page) => page.pageid === pageId);
   return index >= 0 ? index.toString() : "0";
 });
 
@@ -189,8 +192,9 @@ const toggleSidebar = () => {
 const handleMenuSelect = (index: string) => {
   const selectedPage = appSchema.pages[parseInt(index)];
   if (selectedPage) {
+    const appId = (route.params.appId as string) || DEFAULT_APP_ID;
     router.push({
-      query: { ...route.query, page: selectedPage.pageName },
+      path: `/preview/${appId}/${selectedPage.pageid}`,
     });
   }
 };

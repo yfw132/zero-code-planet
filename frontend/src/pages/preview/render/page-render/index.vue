@@ -14,6 +14,11 @@
         :key="item.dataSourceId"
         :dataSourceSchema="item.dataSourceSchema"
       />
+      <DataCard
+        v-if="item.componentName === 'DataCard'"
+        :key="item.dataSourceId"
+        :dataSourceSchema="item.dataSourceSchema"
+      />
     </div>
   </div>
 </template>
@@ -24,19 +29,25 @@ import { useRoute } from "vue-router";
 
 import DataManage from "../component-render/data-manage/index.vue";
 import DataVisual from "../component-render/data-visual/index.vue";
-import { testAppSchema } from "../../test";
+import DataCard from "../component-render/data-card/index.vue";
+import { testAppSchema, DEFAULT_PAGE_ID } from "../../test";
 import { PageComponentDetail, PageItem } from "../../types/page";
 
 const route = useRoute();
 
 // 根据url参数获取当前页面
 const currentPageName = computed(() => {
-  return (route.query.page as string) || testAppSchema.pages[0].pageName;
+  const pageId = (route.params.pageId as string) || DEFAULT_PAGE_ID;
+
+  // 根据pageId找到对应的页面名称
+  const page = testAppSchema.pages.find((p) => p.pageid === pageId);
+  return page ? page.pageName : testAppSchema.pages[0].pageName;
 });
 
 // 根据当前页面名称获取页面详情
 const pageDetail: Ref<PageItem & { components: PageComponentDetail[] }> = ref({
   pageName: "",
+  pageid: "",
   description: "",
   components: [],
 });
@@ -50,6 +61,7 @@ const updatePageDetail = () => {
   if (currentPage) {
     pageDetail.value = {
       pageName: currentPage.pageName,
+      pageid: currentPage.pageid,
       description: currentPage.description,
       components: currentPage.components.map((component) => {
         const dataSourceSchema = testAppSchema.dataSource.find(

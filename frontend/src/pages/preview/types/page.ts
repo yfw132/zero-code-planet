@@ -7,12 +7,14 @@ import { DataSourceItem } from "./dataSource";
 // 基础组件类型
 export type ComponentType =
   | "DataManage" // 数据管理组件
-  | "DataVisual"; // 数据可视化组件
+  | "DataVisual" // 数据可视化组件
+  | "DataCard"; // 数据卡片组件
 
 // 组件配置接口
 export interface PageComponent {
   componentName: ComponentType;
   dataSourceId: string;
+  config?: Record<string, any>; // 组件的详细配置 后期代扩充
 }
 
 // 组件配置详细接口，继承PageComponent
@@ -23,6 +25,7 @@ export interface PageComponentDetail extends PageComponent {
 // 页面配置接口
 export interface PageItem {
   pageName: string;
+  pageid: string;
   description: string;
   components: PageComponent[];
 }
