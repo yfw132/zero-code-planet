@@ -313,7 +313,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, nextTick } from "vue";
+import { ref, reactive, computed, onMounted, nextTick, watch } from "vue";
 import { ElMessage } from "element-plus";
 import {
   Plus,
@@ -323,7 +323,8 @@ import {
   Delete,
   Warning,
 } from "@element-plus/icons-vue";
-import type { FormField, DataSourceItem } from "../../schema/dataSource";
+
+import type { FormField, DataSourceItem } from "../../../types/dataSource";
 
 // dataSourceSchema 是从父组件传递过来的参数
 const props = defineProps<{
@@ -591,6 +592,7 @@ const exportData = () => {
 
 const handleRowClick = (row: Record<string, any>) => {
   // 可以在这里添加行点击事件处理
+  console.log(row);
 };
 
 // 格式化显示值
@@ -629,45 +631,280 @@ const onCurrentPageChange = (page: number) => {
   currentPage.value = page;
 };
 
+// 初始化测试数据
+const initTestData = () => {
+  const dataSourceId = currentSchema.value.id;
+
+  switch (dataSourceId) {
+    case "user":
+      tableData.value = [
+        {
+          id: "1",
+          name: "张三",
+          age: 28,
+          email: "zhangsan@example.com",
+          phone: "13800138001",
+          gender: "male",
+          city: "beijing",
+          hobbies: ["reading", "music"],
+          birthday: "1995-06-15",
+          salary: 15000,
+          experience: "3-5",
+          introduction: "有丰富的前端开发经验",
+          agreement: true,
+          newsletter: false,
+        },
+        {
+          id: "2",
+          name: "李四",
+          age: 32,
+          email: "lisi@example.com",
+          phone: "13800138002",
+          gender: "female",
+          city: "shanghai",
+          hobbies: ["sports", "travel"],
+          birthday: "1991-03-20",
+          salary: 18000,
+          experience: "5-10",
+          introduction: "热爱技术，善于团队协作",
+          agreement: true,
+          newsletter: true,
+        },
+        {
+          id: "3",
+          name: "王五",
+          age: 25,
+          email: "wangwu@example.com",
+          phone: "13800138003",
+          gender: "male",
+          city: "guangzhou",
+          hobbies: ["photography", "gaming"],
+          birthday: "1998-09-10",
+          salary: 12000,
+          experience: "1-3",
+          introduction: "刚毕业的新人，学习能力强",
+          agreement: true,
+          newsletter: true,
+        },
+      ];
+      break;
+
+    case "product":
+      tableData.value = [
+        {
+          id: "1",
+          productName: "iPhone 15 Pro",
+          productCode: "IP15P001",
+          category: "electronics",
+          price: 7999,
+          stock: 50,
+          brand: "Apple",
+          status: "active",
+          tags: ["new", "hot"],
+          description: "最新款iPhone，搭载A17 Pro芯片",
+          launchDate: "2023-09-22",
+          featured: true,
+        },
+        {
+          id: "2",
+          productName: "Nike Air Max 270",
+          productCode: "NKE270001",
+          category: "sports",
+          price: 899,
+          stock: 100,
+          brand: "Nike",
+          status: "active",
+          tags: ["hot", "recommend"],
+          description: "经典跑鞋，舒适透气",
+          launchDate: "2023-08-15",
+          featured: false,
+        },
+        {
+          id: "3",
+          productName: "编程珠玑",
+          productCode: "BK001",
+          category: "books",
+          price: 59,
+          stock: 200,
+          brand: "人民邮电出版社",
+          status: "active",
+          tags: ["recommend"],
+          description: "程序员必读经典书籍",
+          launchDate: "2023-07-01",
+          featured: true,
+        },
+      ];
+      break;
+
+    case "order":
+      tableData.value = [
+        {
+          id: "1",
+          orderNumber: "ORD202312001",
+          customerName: "张三",
+          customerPhone: "13800138001",
+          totalAmount: 1999.0,
+          orderStatus: "delivered",
+          paymentMethod: "alipay",
+          shippingAddress: "北京市朝阳区xxx街道xxx号",
+          orderDate: "2023-12-01",
+          deliveryDate: "2023-12-03",
+          urgent: false,
+          notes: "请放在门口",
+        },
+        {
+          id: "2",
+          orderNumber: "ORD202312002",
+          customerName: "李四",
+          customerPhone: "13800138002",
+          totalAmount: 899.0,
+          orderStatus: "shipped",
+          paymentMethod: "wechat",
+          shippingAddress: "上海市浦东新区xxx路xxx号",
+          orderDate: "2023-12-02",
+          deliveryDate: "2023-12-04",
+          urgent: true,
+          notes: "加急订单",
+        },
+        {
+          id: "3",
+          orderNumber: "ORD202312003",
+          customerName: "王五",
+          customerPhone: "13800138003",
+          totalAmount: 59.0,
+          orderStatus: "paid",
+          paymentMethod: "bank",
+          shippingAddress: "广州市天河区xxx大道xxx号",
+          orderDate: "2023-12-03",
+          deliveryDate: "2023-12-05",
+          urgent: false,
+          notes: "",
+        },
+      ];
+      break;
+
+    case "article":
+      tableData.value = [
+        {
+          id: "1",
+          title: "Vue 3.0 新特性详解",
+          author: "张三",
+          category: "tech",
+          tags: ["trending", "tutorial"],
+          status: "published",
+          publishDate: "2023-12-01",
+          readTime: 15,
+          summary: "详细介绍Vue 3.0的新特性和改进",
+          content: "Vue 3.0带来了许多激动人心的新特性...",
+          featured: true,
+          allowComments: true,
+        },
+        {
+          id: "2",
+          title: "创业公司如何选择技术栈",
+          author: "李四",
+          category: "business",
+          tags: ["featured", "original"],
+          status: "published",
+          publishDate: "2023-11-28",
+          readTime: 20,
+          summary: "从技术和商业角度分析创业公司的技术选择",
+          content: "创业公司在选择技术栈时需要考虑多个因素...",
+          featured: false,
+          allowComments: true,
+        },
+        {
+          id: "3",
+          title: "北京美食探店指南",
+          author: "王五",
+          category: "food",
+          tags: ["trending"],
+          status: "draft",
+          publishDate: "",
+          readTime: 10,
+          summary: "推荐北京地道美食餐厅",
+          content: "北京作为历史悠久的城市，有着丰富的美食文化...",
+          featured: false,
+          allowComments: true,
+        },
+      ];
+      break;
+
+    case "employee":
+      tableData.value = [
+        {
+          id: "1",
+          employeeId: "EMP001",
+          fullName: "张三",
+          department: "tech",
+          position: "前端开发工程师",
+          level: "senior",
+          email: "zhangsan@company.com",
+          phone: "13800138001",
+          hireDate: "2021-03-15",
+          salary: 18000,
+          skills: ["javascript", "vue", "react"],
+          status: "active",
+          notes: "技术能力强，团队合作好",
+          remote: true,
+        },
+        {
+          id: "2",
+          employeeId: "EMP002",
+          fullName: "李四",
+          department: "product",
+          position: "产品经理",
+          level: "middle",
+          email: "lisi@company.com",
+          phone: "13800138002",
+          hireDate: "2022-01-10",
+          salary: 16000,
+          skills: ["python", "mysql"],
+          status: "active",
+          notes: "产品规划能力出色",
+          remote: false,
+        },
+        {
+          id: "3",
+          employeeId: "EMP003",
+          fullName: "王五",
+          department: "design",
+          position: "UI设计师",
+          level: "junior",
+          email: "wangwu@company.com",
+          phone: "13800138003",
+          hireDate: "2023-06-01",
+          salary: 12000,
+          skills: [],
+          status: "active",
+          notes: "设计作品有创意",
+          remote: false,
+        },
+      ];
+      break;
+
+    default:
+      tableData.value = [];
+  }
+};
+
+// 监听数据源变化
+watch(
+  () => props.dataSourceSchema,
+  (newSchema: DataSourceItem) => {
+    if (newSchema) {
+      currentSchema.value = newSchema;
+      initFormData();
+      initTestData();
+    }
+  },
+  { immediate: true }
+);
+
 // 组件挂载时初始化
 onMounted(() => {
   initFormData();
-
-  // 初始化一些示例数据
-  tableData.value = [
-    {
-      id: "1",
-      name: "张三",
-      age: 28,
-      email: "zhangsan@example.com",
-      phone: "13800138001",
-      gender: "male",
-      city: "beijing",
-      hobbies: ["reading", "music"],
-      birthday: "1995-06-15",
-      salary: 15000,
-      experience: "3-5",
-      introduction: "有丰富的前端开发经验",
-      agreement: true,
-      newsletter: false,
-    },
-    {
-      id: "2",
-      name: "李四",
-      age: 32,
-      email: "lisi@example.com",
-      phone: "13800138002",
-      gender: "female",
-      city: "shanghai",
-      hobbies: ["sports", "travel"],
-      birthday: "1991-03-20",
-      salary: 18000,
-      experience: "5-10",
-      introduction: "热爱技术，善于团队协作",
-      agreement: true,
-      newsletter: true,
-    },
-  ];
+  initTestData();
 });
 </script>
 
@@ -677,10 +914,10 @@ onMounted(() => {
 }
 
 .card {
-  background: white;
+  background: var(--el-bg-color);
   padding: 16px 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px var(--el-box-shadow);
 }
 
 .toolbar {
@@ -732,41 +969,8 @@ onMounted(() => {
 }
 
 .input-suffix {
-  color: #909399;
+  color: var(--el-text-color-secondary);
   font-size: 12px;
-}
-
-// Element Plus 组件样式调整
-:deep(.el-table) {
-  .el-table__header {
-    background: #f5f7fa;
-  }
-
-  .el-table__row:hover {
-    background: #f5f7fa;
-  }
-}
-
-:deep(.el-form-item__label) {
-  font-weight: 500;
-  color: #303133;
-}
-
-:deep(.el-input-number) {
-  width: 100%;
-}
-
-:deep(.el-radio-group) {
-  .el-radio {
-    margin-right: 20px;
-  }
-}
-
-:deep(.el-checkbox-group) {
-  .el-checkbox {
-    margin-right: 20px;
-    margin-bottom: 8px;
-  }
 }
 
 // 响应式设计
