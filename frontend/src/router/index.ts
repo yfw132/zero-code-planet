@@ -26,13 +26,13 @@ export const constantRoutes = [
         meta: { title: "项目配置", icon: "Money", roles: ["user"] },
         hidden: false,
       },
-      {
-        path: "/workbench/preview",
-        component: () => import("../pages/preview/index.vue"),
-        meta: { title: "页面预览", icon: "Money", roles: ["user"] },
-        hidden: false,
-      },
     ],
+  },
+  {
+    path: "/preview",
+    component: () => import("../pages/preview/index.vue"),
+    meta: { title: "页面预览", icon: "Money", roles: ["user"] },
+    hidden: false,
   },
   {
     path: "/*",

@@ -1,0 +1,309 @@
+/**
+ * 数据源架构类型定义
+ * 用于定义动态表单的数据结构和验证规则
+ */
+
+// ==================== 基础类型定义 ====================
+
+/**
+ * 表单控件类型
+ * 定义了支持的所有表单控件类型
+ */
+export type FormControlType =
+  | "input" // 文本输入框
+  | "number" // 数字输入框
+  | "email" // 邮箱输入框
+  | "tel" // 电话输入框
+  | "textarea" // 多行文本框
+  | "select" // 下拉选择框
+  | "radio" // 单选按钮
+  | "checkbox" // 复选框
+  | "date" // 日期选择器
+  | "switch"; // 开关
+
+/**
+ * 表单字段数据类型
+ * 定义了字段值的数据类型
+ */
+export type FormFieldDataType =
+  | "string" // 字符串类型
+  | "number" // 数字类型
+  | "boolean" // 布尔类型
+  | "date" // 日期类型
+  | "array"; // 数组类型
+
+/**
+ * 字段选项接口
+ * 用于 select、radio、checkbox 等控件的选项定义
+ */
+export interface FieldOption {
+  value: string | number;
+  label: string;
+}
+
+// ==================== 验证规则定义 ====================
+
+/**
+ * 表单验证规则接口
+ * 定义了字段的验证规则
+ */
+export interface ValidationRule {
+  required?: boolean; // 是否必填
+  min?: number; // 最小值（用于数字）
+  max?: number; // 最大值（用于数字）
+  minLength?: number; // 最小长度（用于字符串）
+  maxLength?: number; // 最大长度（用于字符串）
+  pattern?: string; // 正则表达式模式
+  custom?: (value: any) => boolean | string; // 自定义验证函数
+}
+
+// ==================== 表单字段配置 ====================
+
+/**
+ * 表单字段基础配置接口
+ * 定义了字段的基本配置属性
+ */
+export interface FormFieldConfig {
+  placeholder?: string; // 占位符文本
+  step?: number; // 步长（用于数字输入）
+  options?: FieldOption[]; // 选项列表
+  rows?: number; // 行数（用于 textarea）
+  suffix?: string; // 后缀文本
+  default?: any; // 默认值
+  disabled?: boolean; // 是否禁用
+  readonly?: boolean; // 是否只读
+  visible?: boolean; // 是否可见
+}
+
+/**
+ * 条件显示配置
+ * 定义字段的条件显示逻辑
+ */
+export interface ConditionalConfig {
+  field: string; // 依赖的字段名
+  value: any; // 触发条件的值
+}
+
+/**
+ * 表单字段完整定义接口
+ * 继承基础配置，添加字段基本信息
+ */
+export interface FormField {
+  name: string; // 字段名（唯一标识）
+  type: FormFieldDataType; // 数据类型
+  label: string; // 显示标签
+  control: FormControlType; // 控件类型
+  config?: FormFieldConfig; // 字段配置
+  validation?: ValidationRule; // 验证规则
+  dependencies?: string[]; // 依赖的其他字段
+  conditional?: ConditionalConfig; // 条件显示配置
+}
+
+// ==================== 数据源定义 ====================
+
+/**
+ * 数据源项目接口
+ * 定义单个数据源的完整结构
+ */
+export interface DataSourceItem {
+  id: string; // 唯一标识符
+  title: string; // 标题
+  description: string; // 描述
+  dataSource: FormField[]; // 字段列表
+  version?: string; // 版本号
+  createdAt?: string; // 创建时间
+  updatedAt?: string; // 更新时间
+}
+
+/**
+ * 数据源架构类型
+ * 数据源项目的数组
+ */
+export type DataSourceSchema = DataSourceItem[];
+
+// ==================== 数据源实例 ====================
+
+/**
+ * 默认数据源配置
+ * 包含用户信息管理的完整表单定义
+ */
+export const schema: DataSourceSchema = [
+  {
+    title: "用户信息",
+    description: "用户基本信息管理",
+    id: "user",
+    dataSource: [
+      {
+        name: "name",
+        type: "string",
+        label: "姓名",
+        control: "input",
+        config: {
+          placeholder: "请输入您的姓名",
+        },
+        validation: {
+          required: true,
+          maxLength: 50,
+        },
+      },
+      {
+        name: "age",
+        type: "number",
+        label: "年龄",
+        control: "number",
+        config: {
+          placeholder: "请输入您的年龄",
+        },
+        validation: {
+          required: true,
+          min: 0,
+          max: 120,
+        },
+      },
+      {
+        name: "email",
+        type: "string",
+        label: "邮箱",
+        control: "email",
+        config: {
+          placeholder: "请输入您的邮箱地址",
+        },
+        validation: {
+          required: true,
+          pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
+        },
+      },
+      {
+        name: "phone",
+        type: "string",
+        label: "手机号",
+        control: "tel",
+        config: {
+          placeholder: "请输入您的手机号",
+        },
+        validation: {
+          required: true,
+          pattern: "^1[3-9]\\d{9}$",
+        },
+      },
+      {
+        name: "gender",
+        type: "string",
+        label: "性别",
+        control: "radio",
+        config: {
+          options: [
+            { value: "male", label: "男" },
+            { value: "female", label: "女" },
+            { value: "other", label: "其他" },
+          ],
+        },
+        validation: {
+          required: true,
+        },
+      },
+      {
+        name: "city",
+        type: "string",
+        label: "所在城市",
+        control: "select",
+        config: {
+          options: [
+            { value: "beijing", label: "北京" },
+            { value: "shanghai", label: "上海" },
+            { value: "guangzhou", label: "广州" },
+            { value: "shenzhen", label: "深圳" },
+            { value: "hangzhou", label: "杭州" },
+            { value: "chengdu", label: "成都" },
+            { value: "other", label: "其他" },
+          ],
+        },
+        validation: {
+          required: true,
+        },
+      },
+      {
+        name: "hobbies",
+        type: "array",
+        label: "兴趣爱好",
+        control: "checkbox",
+        config: {
+          options: [
+            { value: "reading", label: "阅读" },
+            { value: "music", label: "音乐" },
+            { value: "sports", label: "运动" },
+            { value: "travel", label: "旅行" },
+            { value: "cooking", label: "烹饪" },
+            { value: "photography", label: "摄影" },
+            { value: "gaming", label: "游戏" },
+          ],
+        },
+      },
+      {
+        name: "birthday",
+        type: "date",
+        label: "出生日期",
+        control: "date",
+      },
+      {
+        name: "salary",
+        type: "number",
+        label: "期望薪资",
+        control: "number",
+        config: {
+          placeholder: "请输入期望薪资",
+          suffix: "元",
+        },
+        validation: {
+          min: 0,
+        },
+      },
+      {
+        name: "experience",
+        type: "string",
+        label: "工作经验",
+        control: "select",
+        config: {
+          options: [
+            { value: "fresh", label: "应届毕业生" },
+            { value: "1-3", label: "1-3年" },
+            { value: "3-5", label: "3-5年" },
+            { value: "5-10", label: "5-10年" },
+            { value: "10+", label: "10年以上" },
+          ],
+        },
+      },
+      {
+        name: "introduction",
+        type: "string",
+        label: "个人简介",
+        control: "textarea",
+        config: {
+          placeholder: "请简单介绍一下自己",
+          rows: 4,
+        },
+        validation: {
+          maxLength: 500,
+        },
+      },
+      {
+        name: "agreement",
+        type: "boolean",
+        label: "我同意用户协议和隐私政策",
+        control: "checkbox",
+        validation: {
+          required: true,
+        },
+      },
+      {
+        name: "newsletter",
+        type: "boolean",
+        label: "订阅产品更新邮件",
+        control: "switch",
+        config: {
+          default: false,
+        },
+      },
+    ],
+  },
+];
