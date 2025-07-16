@@ -1,115 +1,138 @@
 <template>
   <div class="admin-layout" :class="{ 'dark-mode': isDarkMode }">
-    <!-- 顶部Header -->
-    <el-header class="admin-header">
-      <div class="header-left">
-        <div class="logo">
-          <el-icon class="logo-icon">
-            <Platform />
-          </el-icon>
-          <span class="logo-text">{{ appSchema.appName }}</span>
-        </div>
-        <div class="breadcrumb-container">
-          <el-breadcrumb separator="/">
-            <el-breadcrumb-item>首页</el-breadcrumb-item>
-            <el-breadcrumb-item>{{ currentPageName }}</el-breadcrumb-item>
-          </el-breadcrumb>
-        </div>
-      </div>
-      <div class="header-right">
-        <el-tooltip content="主题切换" placement="bottom">
-          <el-switch
-            v-model="isDarkMode"
-            class="theme-switch"
-            :active-icon="Moon"
-            :inactive-icon="Sunny"
-            @change="toggleTheme"
-          />
-        </el-tooltip>
-        <el-dropdown class="user-dropdown">
-          <span class="user-info">
-            <el-avatar :size="32" :src="userAvatar" />
-            <span class="username">管理员</span>
-            <el-icon class="arrow-down">
-              <ArrowDown />
+    <!-- 加载状态 -->
+    <div
+      v-if="loading"
+      class="loading-container"
+      v-loading="loading"
+      element-loading-text="正在加载应用数据..."
+    ></div>
+
+    <!-- 错误状态 -->
+    <div v-else-if="error" class="error-container">
+      <el-result icon="error" title="加载失败" :sub-title="error">
+        <template #extra>
+          <el-button type="primary" @click="loadAppData">重新加载</el-button>
+        </template>
+      </el-result>
+    </div>
+
+    <!-- 主要内容 -->
+    <template v-else-if="appSchema">
+      <!-- 顶部Header -->
+      <el-header class="admin-header">
+        <div class="header-left">
+          <div class="logo">
+            <el-icon class="logo-icon">
+              <Platform />
             </el-icon>
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item :icon="User">个人中心</el-dropdown-item>
-              <el-dropdown-item :icon="Setting">系统设置</el-dropdown-item>
-              <el-dropdown-item divided :icon="SwitchButton"
-                >退出登录</el-dropdown-item
-              >
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </div>
-    </el-header>
-
-    <!-- 主体容器 -->
-    <el-container class="main-container">
-      <!-- 左侧导航 -->
-      <el-aside class="admin-sidebar" :width="sidebarWidth">
-        <el-scrollbar class="sidebar-scrollbar">
-          <el-menu
-            :default-active="activeMenuIndex"
-            :collapse="isCollapsed"
-            :unique-opened="true"
-            class="sidebar-menu"
-            @select="handleMenuSelect"
-          >
-            <el-menu-item
-              v-for="(page, index) in appSchema.pages"
-              :key="page.pageName"
-              :index="index.toString()"
-            >
-              <el-icon>
-                <Document v-if="page.pageName.includes('用户')" />
-                <Shop v-else-if="page.pageName.includes('产品')" />
-                <ShoppingCart v-else-if="page.pageName.includes('订单')" />
-                <EditPen v-else-if="page.pageName.includes('文章')" />
-                <Avatar v-else-if="page.pageName.includes('员工')" />
-                <PieChart v-else />
+            <span class="logo-text">{{ appSchema?.appName || "应用" }}</span>
+          </div>
+          <div class="breadcrumb-container">
+            <el-breadcrumb separator="/">
+              <el-breadcrumb-item>首页</el-breadcrumb-item>
+              <el-breadcrumb-item>{{ currentPageName }}</el-breadcrumb-item>
+            </el-breadcrumb>
+          </div>
+        </div>
+        <div class="header-right">
+          <el-tooltip content="主题切换" placement="bottom">
+            <el-switch
+              v-model="isDarkMode"
+              class="theme-switch"
+              :active-icon="Moon"
+              :inactive-icon="Sunny"
+              @change="toggleTheme"
+            />
+          </el-tooltip>
+          <el-dropdown class="user-dropdown">
+            <span class="user-info">
+              <el-avatar :size="32" :src="userAvatar" />
+              <span class="username">管理员</span>
+              <el-icon class="arrow-down">
+                <ArrowDown />
               </el-icon>
-              <template #title>{{ page.pageName }}</template>
-            </el-menu-item>
-          </el-menu>
-        </el-scrollbar>
-        <div class="sidebar-footer">
-          <el-button
-            class="collapse-btn"
-            :icon="isCollapsed ? Expand : Fold"
-            @click="toggleSidebar"
-            link
-          />
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item :icon="User">个人中心</el-dropdown-item>
+                <el-dropdown-item :icon="Setting">系统设置</el-dropdown-item>
+                <el-dropdown-item divided :icon="SwitchButton"
+                  >退出登录</el-dropdown-item
+                >
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
-      </el-aside>
+      </el-header>
 
-      <!-- 右侧主内容 -->
-      <el-main class="admin-main">
-        <div class="main-header">
-          <div class="page-title">
-            <h2>{{ currentPageName }}</h2>
-            <p class="page-description">{{ currentPageDescription }}</p>
+      <!-- 主体容器 -->
+      <el-container class="main-container">
+        <!-- 左侧导航 -->
+        <el-aside class="admin-sidebar" :width="sidebarWidth">
+          <el-scrollbar class="sidebar-scrollbar">
+            <el-menu
+              :default-active="activeMenuIndex"
+              :collapse="isCollapsed"
+              :unique-opened="true"
+              class="sidebar-menu"
+              @select="handleMenuSelect"
+            >
+              <el-menu-item
+                v-for="(page, index) in appSchema?.pages || []"
+                :key="page.pageName"
+                :index="index.toString()"
+              >
+                <el-icon>
+                  <Document v-if="page.pageName.includes('用户')" />
+                  <Shop v-else-if="page.pageName.includes('产品')" />
+                  <ShoppingCart v-else-if="page.pageName.includes('订单')" />
+                  <EditPen v-else-if="page.pageName.includes('文章')" />
+                  <Avatar v-else-if="page.pageName.includes('员工')" />
+                  <PieChart v-else />
+                </el-icon>
+                <template #title>{{ page.pageName }}</template>
+              </el-menu-item>
+            </el-menu>
+          </el-scrollbar>
+          <div class="sidebar-footer">
+            <el-button
+              class="collapse-btn"
+              :icon="isCollapsed ? Expand : Fold"
+              @click="toggleSidebar"
+              link
+            />
           </div>
-          <div class="page-actions">
-            <el-button :icon="Refresh" @click="refreshPage" circle />
-            <el-button :icon="FullScreen" @click="toggleFullscreen" circle />
-          </div>
-        </div>
+        </el-aside>
 
-        <!-- 页面内容区域 -->
-        <div class="page-content">
-          <PageRender />
-        </div>
-      </el-main>
-    </el-container>
+        <!-- 右侧主内容 -->
+        <el-main class="admin-main">
+          <div class="main-header">
+            <div class="page-title">
+              <h2>{{ currentPageName }}</h2>
+              <p class="page-description">{{ currentPageDescription }}</p>
+            </div>
+            <div class="page-actions">
+              <el-button :icon="Refresh" @click="refreshPage" circle />
+              <el-button :icon="FullScreen" @click="toggleFullscreen" circle />
+            </div>
+          </div>
+
+          <!-- 页面内容区域 -->
+          <div class="page-content">
+            <PageRender
+              :app-schema="appSchema"
+              :current-page-id="currentPageId"
+            />
+          </div>
+        </el-main>
+      </el-container>
+    </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import {
   Platform,
@@ -133,14 +156,16 @@ import {
 import { ElMessage } from "element-plus";
 
 import PageRender from "../page-render/index.vue";
-import { testAppSchema, DEFAULT_APP_ID, DEFAULT_PAGE_ID } from "../../test";
+import { DEFAULT_APP_ID, DEFAULT_PAGE_ID } from "../../test";
+import { getAppFullData, type AppFullData } from "@/api/app";
 
 const route = useRoute();
 const router = useRouter();
 
 // 应用数据
-const appSchema = testAppSchema;
-console.log("appSchema", appSchema);
+const appSchema = ref<AppFullData | null>(null);
+const loading = ref(true);
+const error = ref<string | null>(null);
 
 // 响应式状态
 const isDarkMode = ref(false);
@@ -151,28 +176,54 @@ const userAvatar = ref(
 
 // 计算属性
 const currentPageName = computed(() => {
-  const pageId = (route.params.pageId as string) || DEFAULT_PAGE_ID;
+  if (!appSchema.value?.pages?.length) return "";
 
-  // 根据pageId找到对应的页面名称
-  const page = appSchema.pages.find((p) => p.pageid === pageId);
-  return page ? page.pageName : appSchema.pages[0].pageName;
+  const pageId = (route.params.pageId as string) || DEFAULT_PAGE_ID;
+  const page = appSchema.value.pages.find((p) => p.pageid === pageId);
+  return page ? page.pageName : appSchema.value.pages[0].pageName;
 });
 
 const currentPageDescription = computed(() => {
-  const currentPage = appSchema.pages.find(
+  if (!appSchema.value?.pages?.length) return "";
+
+  const currentPage = appSchema.value.pages.find(
     (page) => page.pageName === currentPageName.value
   );
   return currentPage?.description || "";
 });
 
 const activeMenuIndex = computed(() => {
+  if (!appSchema.value?.pages?.length) return "0";
+
   const pageId = (route.params.pageId as string) || DEFAULT_PAGE_ID;
-  const index = appSchema.pages.findIndex((page) => page.pageid === pageId);
+  const index = appSchema.value.pages.findIndex(
+    (page) => page.pageid === pageId
+  );
   return index >= 0 ? index.toString() : "0";
 });
 
 const sidebarWidth = computed(() => {
   return isCollapsed.value ? "64px" : "200px";
+});
+
+const currentPageId = computed(() => {
+  const urlPageId = route.params.pageId as string;
+
+  // 如果应用数据已加载
+  if (appSchema.value?.pages?.length) {
+    // 检查URL中的pageId是否存在于页面列表中
+    if (
+      urlPageId &&
+      appSchema.value.pages.some((page) => page.pageid === urlPageId)
+    ) {
+      return urlPageId;
+    }
+    // 如果没有pageId或pageId不存在，使用第一个页面
+    return appSchema.value.pages[0].pageid;
+  }
+
+  // 应用数据未加载时，使用URL中的pageId或默认值
+  return urlPageId || DEFAULT_PAGE_ID;
 });
 
 // 方法
@@ -191,7 +242,9 @@ const toggleSidebar = () => {
 };
 
 const handleMenuSelect = (index: string) => {
-  const selectedPage = appSchema.pages[parseInt(index)];
+  if (!appSchema.value?.pages?.length) return;
+
+  const selectedPage = appSchema.value.pages[parseInt(index)];
   if (selectedPage) {
     const appId = (route.params.appId as string) || DEFAULT_APP_ID;
     router.push({
@@ -221,11 +274,48 @@ onMounted(() => {
     isDarkMode.value = true;
     toggleTheme(true);
   }
+
+  // 加载应用数据
+  loadAppData();
 });
+
+// 监听页面ID变化，自动更新路由
+watch(
+  currentPageId,
+  (newPageId) => {
+    const urlPageId = route.params.pageId as string;
+
+    // 如果计算出的pageId与URL中的不一致，且应用数据已加载，则更新路由
+    if (newPageId !== urlPageId && appSchema.value?.pages?.length) {
+      const appId = (route.params.appId as string) || DEFAULT_APP_ID;
+      router.replace({
+        path: `/preview/${appId}/${newPageId}`,
+      });
+    }
+  },
+  { immediate: false }
+);
 
 // 监听主题变化并保存到本地存储
 const saveTheme = () => {
   localStorage.setItem("admin-theme", isDarkMode.value ? "dark" : "light");
+};
+
+// 加载应用数据
+const loadAppData = async () => {
+  try {
+    loading.value = true;
+    error.value = null;
+
+    const appId = (route.params.appId as string) || DEFAULT_APP_ID;
+    const data = await getAppFullData(appId);
+    appSchema.value = data;
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : "加载应用数据失败";
+    ElMessage.error(error.value);
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 
@@ -439,6 +529,23 @@ const saveTheme = () => {
   .page-content {
     background: #111827;
   }
+}
+
+// 加载和错误状态样式
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: var(--el-bg-color);
+}
+
+.error-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: var(--el-bg-color);
 }
 
 // 响应式设计

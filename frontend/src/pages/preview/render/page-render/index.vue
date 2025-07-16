@@ -24,62 +24,72 @@
 </template>
 
 <script setup lang="ts">
-import { ref, Ref, computed, watch } from "vue";
-import { useRoute } from "vue-router";
-
+import { computed } from "vue";
 import DataManage from "../component-render/data-manage/index.vue";
 import DataVisual from "../component-render/data-visual/index.vue";
 import DataCard from "../component-render/data-card/index.vue";
-import { testAppSchema, DEFAULT_PAGE_ID } from "../../test";
-import { PageComponentDetail, PageItem } from "../../types/page";
+import { PageComponentDetail } from "../../types/page";
+import type { AppFullData } from "@/api/app";
+import type { DataSourceItem as ApiDataSourceItem } from "@/api/dataSource";
 
-const route = useRoute();
+// 定义 props
+interface Props {
+  appSchema: AppFullData;
+  currentPageId: string;
+}
 
-// 根据url参数获取当前页面
-const currentPageName = computed(() => {
-  const pageId = (route.params.pageId as string) || DEFAULT_PAGE_ID;
+const props = defineProps<Props>();
 
-  // 根据pageId找到对应的页面名称
-  const page = testAppSchema.pages.find((p) => p.pageid === pageId);
-  return page ? page.pageName : testAppSchema.pages[0].pageName;
-});
-
-// 根据当前页面名称获取页面详情
-const pageDetail: Ref<PageItem & { components: PageComponentDetail[] }> = ref({
-  pageName: "",
-  pageid: "",
-  description: "",
-  components: [],
-});
-
-// 更新页面详情
-const updatePageDetail = () => {
-  const currentPage = testAppSchema.pages.find(
-    (page) => page.pageName === currentPageName.value
+// 根据当前页面ID获取页面详情
+const pageDetail = computed(() => {
+  const currentPage = props.appSchema.pages.find(
+    (page) => page.pageid === props.currentPageId
   );
 
-  if (currentPage) {
-    pageDetail.value = {
-      pageName: currentPage.pageName,
-      pageid: currentPage.pageid,
-      description: currentPage.description,
-      components: currentPage.components.map((component) => {
-        const dataSourceSchema = testAppSchema.dataSource.find(
-          (item) => item.id === component.dataSourceId
-        );
-        return {
-          ...component,
-          dataSourceSchema: dataSourceSchema!,
-        };
-      }),
+  if (!currentPage) {
+    return {
+      pageName: "",
+      pageid: "",
+      description: "",
+      components: [],
     };
   }
-};
 
-// 监听页面变化
-watch(currentPageName, updatePageDetail, { immediate: true });
+  return {
+    pageName: currentPage.pageName,
+    pageid: currentPage.pageid,
+    description: currentPage.description,
+    components: currentPage.components.map((component): PageComponentDetail => {
+      const apiDataSource = props.appSchema.dataSource.find(
+        (item: ApiDataSourceItem) =>
+          item.datasourceid === component.dataSourceId
+      );
 
-console.log("Page Detail:", pageDetail.value);
+      // 将API数据源格式转换为组件期望的格式
+      const dataSourceSchema = apiDataSource
+        ? {
+            id: apiDataSource.datasourceid,
+            title: apiDataSource.title,
+            description: apiDataSource.description || "",
+            dataSource: apiDataSource.dataSource,
+            version: apiDataSource.version,
+            createdAt: apiDataSource.createdAt,
+            updatedAt: apiDataSource.updatedAt,
+          }
+        : {
+            id: component.dataSourceId,
+            title: "Unknown DataSource",
+            description: "",
+            dataSource: [],
+          };
+
+      return {
+        ...component,
+        dataSourceSchema,
+      };
+    }),
+  };
+});
 </script>
 
 <style scoped lang="scss">

@@ -385,7 +385,7 @@ const formatDate = (date: Date) => {
 
 const openProject = (project: ProjectItem) => {
   // 使用真实的appid打开项目
-  window.open(`/preview/${project.appid}/pageid1`, "_blank");
+  window.open(`/preview/${project.appid}`, "_blank");
 };
 
 const editProject = (project: ProjectItem) => {

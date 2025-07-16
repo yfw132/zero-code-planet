@@ -1,4 +1,6 @@
 import request from "../utils/request";
+import type { PageItem } from "./page";
+import type { DataSourceItem } from "./dataSource";
 
 const path = "appManage";
 
@@ -34,7 +36,7 @@ export function getAppInfo(appid: string): Promise<AppItem> {
 }
 
 // 获取应用完整数据（包含关联的pages和dataSources）
-export function getAppFullData(appid: string): Promise<AppItem> {
+export function getAppFullData(appid: string): Promise<AppFullData> {
   return request({
     url: `api/${path}/${appid}/full`,
     method: "get",
@@ -124,4 +126,10 @@ export interface UpdateAppRequest {
   version?: string;
   status?: string;
   tags?: string[];
+}
+
+// 完整应用数据类型（包含页面和数据源对象）
+export interface AppFullData extends Omit<AppItem, "pages" | "dataSource"> {
+  pages: PageItem[];
+  dataSource: DataSourceItem[];
 }

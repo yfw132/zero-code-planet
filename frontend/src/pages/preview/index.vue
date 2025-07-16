@@ -13,13 +13,14 @@ import { DEFAULT_APP_ID, DEFAULT_PAGE_ID } from "./test";
 const route = useRoute();
 const router = useRouter();
 
-// 检查路由参数，如果缺少则重定向到默认值
+// 检查路由参数，只有在完全没有appId时才重定向
 onMounted(() => {
   const appId = route.params.appId as string;
-  const pageId = route.params.pageId as string;
-
-  if (!appId || !pageId) {
-    router.replace(`/preview/${DEFAULT_APP_ID}/${DEFAULT_PAGE_ID}`);
+  // 只有在没有appId时才重定向到默认应用
+  // pageId可以由app-render组件自动处理
+  if (!appId) {
+    console.log("preview/index.vue - No appId found, redirecting to default");
+    router.replace(`/preview/${DEFAULT_APP_ID}`);
   }
 });
 </script>

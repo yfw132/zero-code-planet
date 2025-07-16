@@ -35,9 +35,10 @@ export const constantRoutes = [
     hidden: false,
   },
   {
-    path: "/preview",
-    redirect: "/preview/appid1/pageid1",
-    meta: { title: "页面预览重定向", hidden: true },
+    path: "/preview/:appId",
+    component: () => import("../pages/preview/index.vue"),
+    meta: { title: "页面预览", icon: "Money", roles: ["user"] },
+    hidden: false,
   },
   {
     path: "/*",
