@@ -140,6 +140,7 @@ const router = useRouter();
 
 // 应用数据
 const appSchema = testAppSchema;
+console.log("appSchema", appSchema);
 
 // 响应式状态
 const isDarkMode = ref(false);

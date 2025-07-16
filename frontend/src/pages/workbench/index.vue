@@ -384,7 +384,9 @@ const formatDate = (date: Date) => {
 };
 
 const openProject = (project: any) => {
-  router.push(`/workbench/config?id=${project.id}`);
+  // router.push(`/workbench/config?id=${project.id}`);
+  // 新窗口打开
+  window.open(`/preview/appid1/pageid1`, "_blank");
 };
 
 const editProject = (project: any) => {
