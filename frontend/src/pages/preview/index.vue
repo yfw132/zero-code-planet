@@ -8,7 +8,6 @@
 import { onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import AppRender from "./render/app-render/index.vue";
-import { DEFAULT_APP_ID, DEFAULT_PAGE_ID } from "./test";
 
 const route = useRoute();
 const router = useRouter();
@@ -20,7 +19,7 @@ onMounted(() => {
   // pageId可以由app-render组件自动处理
   if (!appId) {
     console.log("preview/index.vue - No appId found, redirecting to default");
-    router.replace(`/preview/${DEFAULT_APP_ID}`);
+    router.replace(`/workbench`);
   }
 });
 </script>
