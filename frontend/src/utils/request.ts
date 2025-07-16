@@ -4,7 +4,7 @@ import { ElMessage } from "element-plus";
 // 创建axios实例
 const service = axios.create({
   // baseURL: 'http://suona.mua5201314.com', // api 的 base_url
-  baseURL: "http://localhost:3000", // api 的 base_url
+  baseURL: import.meta.env.VITE_API_BASE_URL, // 使用环境变量设置 base_url
   timeout: 1000 * 30, // 请求超时时间
 });
 
