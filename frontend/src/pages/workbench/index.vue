@@ -91,7 +91,7 @@
         </div>
       </div>
 
-      <div class="projects-grid">
+      <div v-loading="loading" class="projects-grid">
         <el-card
           v-for="project in filteredProjects"
           :key="project.id"
@@ -261,6 +261,55 @@ import {
   Check,
 } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import {
+  getAppList,
+  createApp,
+  deleteApp,
+  cloneApp,
+  type AppItem,
+} from "@/api/app";
+
+// 前端项目显示类型
+interface ProjectItem {
+  id: string; // 对应后端的appid
+  name: string; // 对应后端的appName
+  description: string;
+  status: "进行中" | "已完成" | "未开始";
+  progress: number;
+  icon: string;
+  updatedAt: Date;
+  createdAt: Date;
+  appid: string; // 保留原始appid
+}
+
+// 状态映射
+const statusMap = {
+  draft: "未开始",
+  published: "已完成",
+  archived: "进行中",
+} as const;
+
+const reverseStatusMap = {
+  未开始: "draft",
+  已完成: "published",
+  进行中: "archived",
+} as const;
+
+// 数据转换函数
+const convertAppToProject = (app: AppItem): ProjectItem => {
+  return {
+    id: app.appid,
+    name: app.appName,
+    description: app.description || "",
+    status: statusMap[app.status] || "未开始",
+    progress:
+      app.status === "published" ? 100 : app.status === "archived" ? 75 : 0,
+    icon: "Monitor",
+    updatedAt: new Date(app.updatedAt),
+    createdAt: new Date(app.createdAt),
+    appid: app.appid,
+  };
+};
 
 const router = useRouter();
 
@@ -271,62 +320,8 @@ const isGenerating = ref(false);
 const showQuickStart = ref(false);
 
 // 项目相关
-const projects = ref([
-  {
-    id: 1,
-    name: "智能电商平台",
-    description:
-      "AI生成的现代化电商解决方案，包含用户管理、商品展示、订单处理等完整功能",
-    status: "进行中",
-    progress: 75,
-    icon: "Monitor",
-    updatedAt: new Date("2024-01-15"),
-    createdAt: new Date("2024-01-10"),
-  },
-  {
-    id: 2,
-    name: "企业管理系统",
-    description:
-      "面向中小企业的综合管理平台，涵盖人事、财务、项目管理等核心业务",
-    status: "已完成",
-    progress: 100,
-    icon: "TakeawayBox",
-    updatedAt: new Date("2024-01-12"),
-    createdAt: new Date("2024-01-05"),
-  },
-  {
-    id: 3,
-    name: "在线教育平台",
-    description: "功能完善的在线学习系统，支持视频课程、在线测试、学习进度跟踪",
-    status: "未开始",
-    progress: 0,
-    icon: "Phone",
-    updatedAt: new Date("2024-01-08"),
-    createdAt: new Date("2024-01-08"),
-  },
-  {
-    id: 4,
-    name: "智能电商平台",
-    description:
-      "AI生成的现代化电商解决方案，包含用户管理、商品展示、订单处理等完整功能",
-    status: "进行中",
-    progress: 75,
-    icon: "Monitor",
-    updatedAt: new Date("2024-01-15"),
-    createdAt: new Date("2024-01-10"),
-  },
-  {
-    id: 5,
-    name: "企业管理系统",
-    description:
-      "面向中小企业的综合管理平台，涵盖人事、财务、项目管理等核心业务",
-    status: "已完成",
-    progress: 100,
-    icon: "TakeawayBox",
-    updatedAt: new Date("2024-01-12"),
-    createdAt: new Date("2024-01-05"),
-  },
-]);
+const projects = ref<ProjectItem[]>([]);
+const loading = ref(false);
 
 const projectFilter = ref("all");
 const showCreateDialog = ref(false);
@@ -347,7 +342,21 @@ const filteredProjects = computed(() => {
   });
 });
 
-// 方法
+// 加载项目列表
+const loadProjects = async () => {
+  try {
+    loading.value = true;
+    const response = await getAppList();
+    projects.value = response.apps.map(convertAppToProject);
+  } catch (error) {
+    ElMessage.error("加载项目列表失败");
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// AI生成项目
 const generateProject = async () => {
   if (!projectName.value.trim()) {
     ElMessage.warning("请输入项目名称");
@@ -356,84 +365,99 @@ const generateProject = async () => {
 
   isGenerating.value = true;
 
-  // 模拟AI生成过程
-  setTimeout(() => {
-    const newProject = {
-      id: Date.now(),
-      name: projectName.value,
+  try {
+    // 调用创建应用API
+    const newApp = await createApp({
+      appName: projectName.value,
       description:
         projectDescription.value || `AI生成的${projectName.value}项目`,
-      status: "进行中",
-      progress: 25,
-      icon: "Monitor",
-      updatedAt: new Date(),
-      createdAt: new Date(),
-    };
+    });
 
+    // 转换数据并添加到列表
+    const newProject = convertAppToProject(newApp);
     projects.value.unshift(newProject);
-    isGenerating.value = false;
+
     projectName.value = "";
     projectDescription.value = "";
-
     ElMessage.success("项目生成成功！");
-  }, 3000);
+  } catch (error) {
+    ElMessage.error("项目生成失败");
+    console.error(error);
+  } finally {
+    isGenerating.value = false;
+  }
 };
 
 const formatDate = (date: Date) => {
   return date.toLocaleDateString("zh-CN");
 };
 
-const openProject = (project: any) => {
-  // router.push(`/workbench/config?id=${project.id}`);
-  // 新窗口打开
-  window.open(`/preview/appid1/pageid1`, "_blank");
+const openProject = (project: ProjectItem) => {
+  // 使用真实的appid打开项目
+  window.open(`/preview/${project.appid}/pageid1`, "_blank");
 };
 
-const editProject = (project: any) => {
+const editProject = (project: ProjectItem) => {
   console.log(project);
   ElMessage.success("编辑项目功能开发中...");
 };
 
-const duplicateProject = (project: any) => {
-  console.log(project);
-  ElMessage.success("复制项目功能开发中...");
+const duplicateProject = async (project: ProjectItem) => {
+  try {
+    const clonedApp = await cloneApp(project.appid, {
+      newAppName: `${project.name} (副本)`,
+    });
+
+    const clonedProject = convertAppToProject(clonedApp);
+    projects.value.unshift(clonedProject);
+    ElMessage.success("项目复制成功");
+  } catch (error) {
+    ElMessage.error("复制项目失败");
+    console.error(error);
+  }
 };
 
-const deleteProject = (project: any) => {
+const deleteProject = (project: ProjectItem) => {
   ElMessageBox.confirm("确定要删除这个项目吗？", "删除确认", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning",
-  }).then(() => {
-    const index = projects.value.findIndex((p) => p.id === project.id);
-    if (index > -1) {
-      projects.value.splice(index, 1);
-      ElMessage.success("项目已删除");
+  }).then(async () => {
+    try {
+      await deleteApp(project.appid);
+      const index = projects.value.findIndex((p) => p.id === project.id);
+      if (index > -1) {
+        projects.value.splice(index, 1);
+        ElMessage.success("项目已删除");
+      }
+    } catch (error) {
+      ElMessage.error("删除项目失败");
+      console.error(error);
     }
   });
 };
 
-const createProject = () => {
+const createProject = async () => {
   if (!newProject.value.name.trim()) {
     ElMessage.warning("请输入项目名称");
     return;
   }
 
-  const project = {
-    id: Date.now(),
-    name: newProject.value.name,
-    description: newProject.value.description,
-    status: "未开始",
-    progress: 0,
-    icon: "Monitor",
-    updatedAt: new Date(),
-    createdAt: new Date(),
-  };
+  try {
+    const newApp = await createApp({
+      appName: newProject.value.name,
+      description: newProject.value.description,
+    });
 
-  projects.value.unshift(project);
-  showCreateDialog.value = false;
-  newProject.value = { name: "", description: "", type: "" };
-  ElMessage.success("项目创建成功");
+    const project = convertAppToProject(newApp);
+    projects.value.unshift(project);
+    showCreateDialog.value = false;
+    newProject.value = { name: "", description: "", type: "" };
+    ElMessage.success("项目创建成功");
+  } catch (error) {
+    ElMessage.error("创建项目失败");
+    console.error(error);
+  }
 };
 
 const handleDialogClose = () => {
@@ -441,7 +465,8 @@ const handleDialogClose = () => {
 };
 
 onMounted(() => {
-  // 初始化
+  // 加载项目列表
+  loadProjects();
 });
 </script>
 

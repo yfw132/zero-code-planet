@@ -3,6 +3,7 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+var cors = require("cors");
 require("dotenv").config();
 
 // 导入数据库连接
@@ -17,6 +18,21 @@ var app = express();
 
 // 连接数据库
 connectDB();
+
+// CORS配置 - 放在其他中间件之前
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "http://127.0.0.1:5173",
+      "http://127.0.0.1:3000",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  })
+);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
