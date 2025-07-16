@@ -249,7 +249,6 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
 import {
   Plus,
   MagicStick,
@@ -289,12 +288,6 @@ const statusMap = {
   archived: "进行中",
 } as const;
 
-const reverseStatusMap = {
-  未开始: "draft",
-  已完成: "published",
-  进行中: "archived",
-} as const;
-
 // 数据转换函数
 const convertAppToProject = (app: AppItem): ProjectItem => {
   return {
@@ -310,8 +303,6 @@ const convertAppToProject = (app: AppItem): ProjectItem => {
     appid: app.appid,
   };
 };
-
-const router = useRouter();
 
 // AI生成相关
 const projectName = ref("");
