@@ -1,0 +1,18 @@
+{
+  "watch": ["./"],
+  "ext": "js,json,env",
+  "ignore": [
+    "node_modules/**/*",
+    "public/**/*",
+    "views/**/*",
+    "*.log",
+    ".git",
+    "*.md"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "verbose": false,
+  "restartable": "rs",
+  "delay": 1000
+}
