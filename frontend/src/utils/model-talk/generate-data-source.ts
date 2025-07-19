@@ -75,7 +75,8 @@ export function generatePrompt(params: GenerateDataSourceParams): string {
 2. 根据业务场景选择合适的控件类型
 3. 为重要字段添加适当的验证规则
 4. 数据源数量控制在${dataSourceCount}个
-5. 确保返回的是有效的JSON格式`;
+5. 所有的表都会自动生成 id、createTime、updateTime 字段，不要在这里添加
+6. 确保返回的是有效的JSON格式`;
 }
 
 // 将模型返回的string处理成JSON

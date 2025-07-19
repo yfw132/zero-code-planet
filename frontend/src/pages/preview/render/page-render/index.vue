@@ -68,7 +68,7 @@ const pageDetail = computed(() => {
       // 将API数据源格式转换为组件期望的格式
       const dataSourceSchema = apiDataSource
         ? {
-            id: apiDataSource.datasourceid,
+            datasourceid: apiDataSource.datasourceid,
             title: apiDataSource.title,
             description: apiDataSource.description || "",
             dataSource: apiDataSource.dataSource,
@@ -77,7 +77,7 @@ const pageDetail = computed(() => {
             updatedAt: apiDataSource.updatedAt,
           }
         : {
-            id: component.dataSourceId,
+            datasourceid: component.dataSourceId,
             title: "Unknown DataSource",
             description: "",
             dataSource: [],

@@ -106,6 +106,8 @@ export interface FormField {
  * 定义单个数据源的完整结构
  */
 export interface DataSourceItem {
+  _id?: string; // MongoDB ID
+  datasourceid?: string; // 数据源ID
   title: string; // 标题
   description: string; // 描述
   dataSource: FormField[]; // 字段列表
