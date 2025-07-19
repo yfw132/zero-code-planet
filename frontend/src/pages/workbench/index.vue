@@ -71,7 +71,7 @@
 
             <div class="steps-container">
               <div
-                v-for="(step, index) in generationSteps"
+                v-for="step in generationSteps"
                 :key="step.id"
                 class="step-item"
                 :class="{
