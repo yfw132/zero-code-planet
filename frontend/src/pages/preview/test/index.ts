@@ -1,4 +1,4 @@
-import { AppSchema } from "../types";
+import { AppSchema } from "../../../types";
 
 import { testPageSchema } from "./page";
 import { testDataSourceSchema } from "./dataSource";

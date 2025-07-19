@@ -28,7 +28,7 @@ import { computed } from "vue";
 import DataManage from "../component-render/data-manage/index.vue";
 import DataVisual from "../component-render/data-visual/index.vue";
 import DataCard from "../component-render/data-card/index.vue";
-import { PageComponentDetail } from "../../types/page";
+import { PageComponentDetail } from "../../../../types/page";
 import type { AppFullData } from "@/api/app";
 import type { DataSourceItem as ApiDataSourceItem } from "@/api/dataSource";
 

@@ -106,7 +106,6 @@ export interface FormField {
  * 定义单个数据源的完整结构
  */
 export interface DataSourceItem {
-  id: string; // 唯一标识符
   title: string; // 标题
   description: string; // 描述
   dataSource: FormField[]; // 字段列表

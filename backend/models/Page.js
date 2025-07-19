@@ -14,7 +14,6 @@ const pageSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       default: generatePageId,
-      index: true,
     },
     pageName: {
       type: String,
@@ -52,7 +51,6 @@ const pageSchema = new mongoose.Schema(
     appid: {
       type: String,
       required: [true, "应用ID是必需的"],
-      index: true,
     },
     // 页面状态
     status: {

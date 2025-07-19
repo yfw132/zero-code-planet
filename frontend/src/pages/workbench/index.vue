@@ -46,6 +46,7 @@
               @click="generateProject"
               :loading="isGenerating"
               class="generate-btn"
+              :disabled="isGenerating"
             >
               <el-icon><MagicStick /></el-icon>
               {{ isGenerating ? "AI正在生成中..." : "开始AI生成" }}
@@ -54,10 +55,53 @@
               size="large"
               @click="showQuickStart = true"
               class="demo-btn"
+              :disabled="isGenerating"
             >
               <el-icon><VideoPlay /></el-icon>
               查看演示
             </el-button>
+          </div>
+
+          <!-- 生成进度展示 -->
+          <div v-if="isGenerating" class="generation-progress">
+            <div class="progress-header">
+              <h4>AI正在为您生成项目</h4>
+              <p>预计总耗时：1-2分钟</p>
+            </div>
+
+            <div class="steps-container">
+              <div
+                v-for="(step, index) in generationSteps"
+                :key="step.id"
+                class="step-item"
+                :class="{
+                  'step-active': currentStep === step.id,
+                  'step-completed': currentStep > step.id,
+                  'step-pending': currentStep < step.id,
+                }"
+              >
+                <div class="step-icon">
+                  <el-icon v-if="currentStep > step.id"><Check /></el-icon>
+                  <el-icon v-else-if="currentStep === step.id"
+                    ><Loading
+                  /></el-icon>
+                  <span v-else>{{ step.id }}</span>
+                </div>
+                <div class="step-content">
+                  <div class="step-name">{{ step.name }}</div>
+                  <div class="step-description">{{ step.description }}</div>
+                  <div class="step-duration">{{ step.duration }}</div>
+                </div>
+                <div v-if="currentStep === step.id" class="step-loading">
+                  <el-progress
+                    type="circle"
+                    :percentage="100"
+                    :width="20"
+                    :show-text="false"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -258,6 +302,7 @@ import {
   CopyDocument,
   Delete,
   Check,
+  Loading,
 } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import {
@@ -267,6 +312,8 @@ import {
   cloneApp,
   type AppItem,
 } from "@/api/app";
+
+import { AppGenerator } from "@/utils/model-talk";
 
 // 前端项目显示类型
 interface ProjectItem {
@@ -309,6 +356,30 @@ const projectName = ref("");
 const projectDescription = ref("");
 const isGenerating = ref(false);
 const showQuickStart = ref(false);
+
+// 新增：生成步骤相关
+const currentStep = ref(0);
+const generationSteps = ref([
+  {
+    id: 1,
+    name: "创建应用基础",
+    description: "正在创建项目基础信息...",
+    duration: "约10秒",
+  },
+  {
+    id: 2,
+    name: "生成数据源",
+    description: "AI正在分析需求并生成数据源...",
+    duration: "45-90秒",
+  },
+  {
+    id: 3,
+    name: "生成页面",
+    description: "AI正在生成页面布局和组件...",
+    duration: "30-60秒",
+  },
+  { id: 4, name: "完成创建", description: "项目创建完成！", duration: "约3秒" },
+]);
 
 // 项目相关
 const projects = ref<ProjectItem[]>([]);
@@ -355,27 +426,46 @@ const generateProject = async () => {
   }
 
   isGenerating.value = true;
+  currentStep.value = 0;
 
   try {
-    // 调用创建应用API
-    const newApp = await createApp({
+    const appConfig = {
       appName: projectName.value,
       description:
         projectDescription.value || `AI生成的${projectName.value}项目`,
-    });
+      dataSourceCount: 6,
+      pageCount: 6,
+    };
+    const newApp = new AppGenerator();
 
-    // 转换数据并添加到列表
-    const newProject = convertAppToProject(newApp);
-    projects.value.unshift(newProject);
+    // 步骤1: 创建应用
+    currentStep.value = 1;
+    await newApp.createApp(appConfig);
 
-    projectName.value = "";
-    projectDescription.value = "";
-    ElMessage.success("项目生成成功！");
+    // 步骤2: 生成并创建数据源
+    setTimeout(() => {
+      // 不阻塞实际的AI任务，假装过了十秒再进行下一步
+      currentStep.value = 2;
+    }, 10000);
+    await newApp.generateAndCreateDataSources(appConfig);
+
+    // 步骤3: 生成并创建页面
+    currentStep.value = 3;
+    await newApp.generateAndCreatePages(appConfig);
+
+    // 步骤4: 完成
+    currentStep.value = 4;
+    ElMessage.success("项目创建成功，请在项目列表中查看");
+    // 加载项目列表
+    loadProjects();
   } catch (error) {
     ElMessage.error("项目生成失败");
     console.error(error);
   } finally {
+    // 等待3秒重置状态
+    await new Promise((resolve) => setTimeout(resolve, 3000));
     isGenerating.value = false;
+    currentStep.value = 0;
   }
 };
 
@@ -582,7 +672,185 @@ onMounted(() => {
           }
         }
       }
+
+      // 生成进度展示样式
+      .generation-progress {
+        margin-top: 32px;
+        padding: 24px;
+        background: linear-gradient(
+          135deg,
+          rgba(102, 126, 234, 0.05) 0%,
+          rgba(118, 75, 162, 0.05) 100%
+        );
+        border-radius: 12px;
+        border: 1px solid rgba(102, 126, 234, 0.1);
+
+        .progress-header {
+          text-align: center;
+          margin-bottom: 24px;
+
+          h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0 0 8px 0;
+          }
+
+          p {
+            color: #6c757d;
+            margin: 0;
+            font-size: 0.9rem;
+          }
+        }
+
+        .steps-container {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+
+          .step-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+
+            &.step-pending {
+              background: rgba(255, 255, 255, 0.5);
+              opacity: 0.6;
+
+              .step-icon {
+                background: #e9ecef;
+                color: #6c757d;
+              }
+
+              .step-content {
+                .step-name {
+                  color: #6c757d;
+                }
+
+                .step-description {
+                  color: #adb5bd;
+                }
+
+                .step-duration {
+                  color: #adb5bd;
+                }
+              }
+            }
+
+            &.step-active {
+              background: rgba(102, 126, 234, 0.1);
+              border: 1px solid rgba(102, 126, 234, 0.2);
+
+              .step-icon {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                animation: pulse 2s infinite;
+              }
+
+              .step-content {
+                .step-name {
+                  color: #667eea;
+                  font-weight: 600;
+                }
+
+                .step-description {
+                  color: #495057;
+                }
+
+                .step-duration {
+                  color: #667eea;
+                  font-weight: 500;
+                }
+              }
+            }
+
+            &.step-completed {
+              background: rgba(40, 167, 69, 0.1);
+              border: 1px solid rgba(40, 167, 69, 0.2);
+
+              .step-icon {
+                background: #28a745;
+                color: white;
+              }
+
+              .step-content {
+                .step-name {
+                  color: #28a745;
+                  font-weight: 600;
+                }
+
+                .step-description {
+                  color: #495057;
+                }
+
+                .step-duration {
+                  color: #28a745;
+                  font-weight: 500;
+                }
+              }
+            }
+
+            .step-icon {
+              width: 32px;
+              height: 32px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 14px;
+              font-weight: 600;
+              flex-shrink: 0;
+              transition: all 0.3s ease;
+            }
+
+            .step-content {
+              flex: 1;
+
+              .step-name {
+                font-size: 1rem;
+                font-weight: 600;
+                margin-bottom: 4px;
+                transition: color 0.3s ease;
+              }
+
+              .step-description {
+                font-size: 0.9rem;
+                color: #6c757d;
+                margin-bottom: 4px;
+                transition: color 0.3s ease;
+              }
+
+              .step-duration {
+                font-size: 0.8rem;
+                color: #adb5bd;
+                transition: color 0.3s ease;
+              }
+            }
+
+            .step-loading {
+              flex-shrink: 0;
+            }
+          }
+        }
+      }
     }
+  }
+}
+
+// 脉冲动画
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
   }
 }
 

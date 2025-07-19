@@ -1,4 +1,4 @@
-import { DataSourceSchema } from "../types/dataSource";
+import { DataSourceSchema } from "../../../types/dataSource";
 // ==================== 数据源实例 ====================
 
 /**

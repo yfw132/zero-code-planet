@@ -1,4 +1,4 @@
-import { PageSchema } from "../types/page";
+import { PageSchema } from "../../../types/page";
 
 // 页面Schema配置
 export const testPageSchema: PageSchema = [

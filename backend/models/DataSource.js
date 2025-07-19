@@ -14,7 +14,6 @@ const dataSourceSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       default: generateDataSourceId,
-      index: true,
     },
     title: {
       type: String,
@@ -85,7 +84,6 @@ const dataSourceSchema = new mongoose.Schema(
     appid: {
       type: String,
       required: [true, "应用ID是必需的"],
-      index: true,
     },
     // 数据源版本
     version: {

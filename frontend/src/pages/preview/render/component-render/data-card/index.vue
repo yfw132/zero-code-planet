@@ -336,7 +336,10 @@ import {
   Warning,
 } from "@element-plus/icons-vue";
 
-import type { FormField, DataSourceItem } from "../../../types/dataSource";
+import type {
+  FormField,
+  DataSourceItem,
+} from "../../../../../types/dataSource";
 
 // dataSourceSchema 是从父组件传递过来的参数
 const props = defineProps<{
