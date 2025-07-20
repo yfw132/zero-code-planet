@@ -430,61 +430,6 @@ router.get("/:datasourceid/fields", async (req, res) => {
   }
 });
 
-// 获取关联数据源的选项
-router.get("/relation/options/:targetDataSourceId", async (req, res) => {
-  try {
-    const { targetDataSourceId } = req.params;
-    const {
-      targetField = "title",
-      targetValueField = "_id",
-      filter = {},
-      sort = {},
-      search = "",
-      searchFields = [],
-      page = 1,
-      pageSize = 20,
-      limit = null,
-    } = req.query;
-
-    // 解析JSON参数
-    const parsedFilter =
-      typeof filter === "string" ? JSON.parse(filter) : filter;
-    const parsedSort = typeof sort === "string" ? JSON.parse(sort) : sort;
-    const parsedSearchFields =
-      typeof searchFields === "string"
-        ? JSON.parse(searchFields)
-        : searchFields;
-
-    const options = {
-      targetField,
-      targetValueField,
-      filter: parsedFilter,
-      sort: parsedSort,
-      search,
-      searchFields: parsedSearchFields,
-      page: parseInt(page),
-      pageSize: parseInt(pageSize),
-      limit: limit ? parseInt(limit) : null,
-    };
-
-    const result = await DataSource.getRelationOptions(
-      targetDataSourceId,
-      options
-    );
-
-    res.json({
-      success: true,
-      data: result,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "获取关联选项失败",
-      error: error.message,
-    });
-  }
-});
-
 // 验证关联配置
 router.post("/relation/validate", async (req, res) => {
   try {

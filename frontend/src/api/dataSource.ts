@@ -157,6 +157,7 @@ export interface FormField {
   validation?: ValidationRule;
   dependencies?: string[];
   conditional?: ConditionalConfig;
+  relation?: RelationConfig;
 }
 
 export interface DataSourceItem {
@@ -189,4 +190,29 @@ export interface UpdateDataSourceRequest {
   dataSource?: FormField[];
   category?: string;
   tags?: string[];
+}
+
+// 关联配置接口
+export interface RelationConfig {
+  type: "foreign" | "lookup" | "cascade";
+  targetDataSourceId: string;
+  targetField?: string;
+  targetValueField?: string;
+  filter?: Record<string, any>;
+  sort?: Record<string, any>;
+  searchable?: boolean;
+  searchFields?: string[];
+  paginated?: boolean;
+  pageSize?: number;
+}
+
+// 验证关联配置
+export function validateRelation(
+  relation: RelationConfig
+): Promise<{ valid: boolean; error?: string; targetDataSource?: any }> {
+  return request({
+    url: "api/dataSourceManage/relation/validate",
+    method: "post",
+    data: { relation },
+  });
 }

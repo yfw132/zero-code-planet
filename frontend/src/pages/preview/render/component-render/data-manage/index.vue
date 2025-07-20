@@ -208,12 +208,20 @@
                 v-else-if="field.control === 'select'"
                 v-model="formData[field.name]"
                 :disabled="field.config?.disabled"
-                placeholder="请选择"
+                :placeholder="field.config?.placeholder || '请选择'"
                 clearable
+                filterable
+                :loading="getRelationLoading(field)"
+                :remote="!!field.relation"
+                :remote-method="
+                  field.relation
+                    ? (query: string) => handleRelationSearch(field, query)
+                    : undefined
+                "
                 style="width: 100%"
               >
                 <el-option
-                  v-for="option in field.config?.options"
+                  v-for="option in getFieldOptions(field)"
                   :key="option.value"
                   :label="option.label"
                   :value="option.value"
@@ -366,6 +374,10 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 const totalCount = ref(0);
 
+// 关联数据缓存
+const relationOptionsCache = ref<Record<string, any[]>>({});
+const relationLoadingCache = ref<Record<string, boolean>>({});
+
 // 获取数据源ID
 const getDataSourceId = computed(() => {
   return currentSchema.value.datasourceid;
@@ -499,14 +511,14 @@ const getColumnWidth = (field: FormField): number => {
   return 120;
 };
 
-const openAddModal = () => {
+const openAddModal = async () => {
   isEditing.value = false;
   editingItem.value = null;
   initFormData();
   showModal.value = true;
 };
 
-const openEditModal = (item: Record<string, any>) => {
+const openEditModal = async (item: Record<string, any>) => {
   isEditing.value = true;
   editingItem.value = item;
 
@@ -710,14 +722,151 @@ watch(searchQuery, () => {
   handleSearch();
 });
 
+// 关联数据处理方法
+const getRelationLoading = (field: FormField): boolean => {
+  if (!field.relation?.targetDataSourceId) return false;
+  return relationLoadingCache.value[field.relation.targetDataSourceId] || false;
+};
+
+const getFieldOptions = (field: FormField): any[] => {
+  if (field.relation?.targetDataSourceId) {
+    // 关联数据源的情况
+    const cacheKey = field.relation.targetDataSourceId;
+    return relationOptionsCache.value[cacheKey] || [];
+  } else {
+    // 静态选项的情况
+    return field.config?.options || [];
+  }
+};
+
+const loadRelationOptions = async (field: FormField) => {
+  if (!field.relation?.targetDataSourceId) return;
+
+  const cacheKey = field.relation.targetDataSourceId;
+
+  // 如果已经加载过，直接返回
+  if (
+    relationOptionsCache.value[cacheKey] &&
+    relationOptionsCache.value[cacheKey].length > 0
+  ) {
+    return;
+  }
+
+  // 如果正在加载中，等待加载完成
+  if (relationLoadingCache.value[cacheKey]) {
+    return;
+  }
+
+  relationLoadingCache.value[cacheKey] = true;
+
+  try {
+    const params: any = {
+      limit: field.relation.pageSize || 20,
+    };
+
+    // 添加过滤条件
+    if (field.relation.filter) {
+      Object.assign(params, field.relation.filter);
+    }
+
+    // 添加排序条件
+    if (field.relation.sort) {
+      // 将排序对象转换为字符串格式
+      const sortArray = Object.entries(field.relation.sort).map(
+        ([key, value]) => (value === 1 ? key : `-${key}`)
+      );
+      params.sort = sortArray.join(",");
+    }
+
+    const response = await getRecordList(
+      field.relation.targetDataSourceId,
+      params
+    );
+
+    // 将记录转换为选项格式
+    const options = response.records.map((record: any) => ({
+      label: record[field.relation!.targetField || "title"] || record._id,
+      value: record[field.relation!.targetValueField || "_id"] || record._id,
+      data: record,
+    }));
+
+    relationOptionsCache.value[cacheKey] = options;
+  } catch (error) {
+    console.error("加载关联选项失败:", error);
+    ElMessage.error("加载关联数据失败");
+  } finally {
+    relationLoadingCache.value[cacheKey] = false;
+  }
+};
+
+const handleRelationSearch = async (field: FormField, query: string) => {
+  if (!field.relation?.targetDataSourceId || !field.relation.searchable) return;
+
+  const cacheKey = field.relation.targetDataSourceId;
+  relationLoadingCache.value[cacheKey] = true;
+
+  try {
+    const params: any = {
+      limit: field.relation.pageSize || 20,
+    };
+
+    // 添加搜索条件
+    if (field.relation.searchFields && field.relation.searchFields.length > 0) {
+      // 为每个搜索字段添加搜索条件
+      field.relation.searchFields.forEach((searchField) => {
+        params[searchField] = query || "";
+      });
+    } else {
+      // 如果没有指定搜索字段，使用目标字段
+      params[field.relation.targetField || "title"] = query || "";
+    }
+
+    // 添加过滤条件
+    if (field.relation.filter) {
+      Object.assign(params, field.relation.filter);
+    }
+
+    // 添加排序条件
+    if (field.relation.sort) {
+      // 将排序对象转换为字符串格式
+      const sortArray = Object.entries(field.relation.sort).map(
+        ([key, value]) => (value === 1 ? key : `-${key}`)
+      );
+      params.sort = sortArray.join(",");
+    }
+
+    const response = await getRecordList(
+      field.relation.targetDataSourceId,
+      params
+    );
+
+    // 将记录转换为选项格式
+    const options = response.records.map((record: any) => ({
+      label: record[field.relation!.targetField || "title"] || record._id,
+      value: record[field.relation!.targetValueField || "_id"] || record._id,
+      data: record,
+    }));
+
+    relationOptionsCache.value[cacheKey] = options;
+  } catch (error) {
+    console.error("搜索关联选项失败:", error);
+    ElMessage.error("搜索关联数据失败");
+  } finally {
+    relationLoadingCache.value[cacheKey] = false;
+  }
+};
+
 // 监听数据源变化
 watch(
   () => props.dataSourceSchema,
-  (newSchema: DataSourceItem) => {
+  async (newSchema: DataSourceItem) => {
     if (newSchema) {
       currentSchema.value = newSchema;
       initFormData();
       loadData();
+      // 清空关联数据缓存
+      relationOptionsCache.value = {};
+      relationLoadingCache.value = {};
     }
   },
   { immediate: true }
