@@ -76,6 +76,60 @@ const dataSourceSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.Mixed,
             default: null,
           },
+          // 新增：关联配置
+          relation: {
+            type: {
+              type: String,
+              enum: ["foreign", "lookup", "cascade"],
+              default: null,
+            },
+            // 关联的数据源ID
+            targetDataSourceId: {
+              type: String,
+              default: null,
+            },
+            // 关联的字段名（用于显示）
+            targetField: {
+              type: String,
+              default: null,
+            },
+            // 关联的字段名（用于值）
+            targetValueField: {
+              type: String,
+              default: null,
+            },
+            // 过滤条件
+            filter: {
+              type: mongoose.Schema.Types.Mixed,
+              default: null,
+            },
+            // 排序条件
+            sort: {
+              type: mongoose.Schema.Types.Mixed,
+              default: null,
+            },
+            // 是否支持搜索
+            searchable: {
+              type: Boolean,
+              default: false,
+            },
+            // 搜索字段
+            searchFields: [
+              {
+                type: String,
+              },
+            ],
+            // 是否支持分页
+            paginated: {
+              type: Boolean,
+              default: false,
+            },
+            // 每页数量
+            pageSize: {
+              type: Number,
+              default: 20,
+            },
+          },
         },
       ],
       default: [],
@@ -128,7 +182,7 @@ dataSourceSchema.index({ status: 1 });
 dataSourceSchema.index({ category: 1 });
 dataSourceSchema.index({ title: 1 });
 
-// Pre-save钩子：确保datasourceid唯一性
+// Pre-save钩子：确保datasourceid唯一性，并处理relation字段
 dataSourceSchema.pre("save", async function (next) {
   if (this.datasourceid && !this.isNew) {
     return next();
@@ -163,6 +217,25 @@ dataSourceSchema.pre("save", async function (next) {
     return next(new Error("无法生成唯一的数据源ID，请重试"));
   }
 
+  // 处理relation字段：如果relation为空或未定义，则不存储
+  if (this.dataSource && Array.isArray(this.dataSource)) {
+    this.dataSource.forEach((field) => {
+      if (field.relation) {
+        // 检查relation对象是否为空或所有属性都为null/undefined
+        const hasValidRelation = Object.values(field.relation).some((value) => {
+          if (Array.isArray(value)) {
+            return value.length > 0;
+          }
+          return value !== null && value !== undefined && value !== "";
+        });
+
+        if (!hasValidRelation) {
+          delete field.relation;
+        }
+      }
+    });
+  }
+
   next();
 });
 
@@ -185,6 +258,141 @@ dataSourceSchema.statics.findByAppId = function (appid) {
 // 静态方法 - 根据分类查找数据源
 dataSourceSchema.statics.findByCategory = function (category) {
   return this.find({ category, status: "published" });
+};
+
+// 静态方法 - 根据数据源ID查找数据源
+dataSourceSchema.statics.findByDataSourceId = function (datasourceid) {
+  return this.findOne({ datasourceid });
+};
+
+// 静态方法 - 获取关联数据源的选项
+dataSourceSchema.statics.getRelationOptions = async function (
+  targetDataSourceId,
+  options = {}
+) {
+  const {
+    targetField = "title",
+    targetValueField = "_id",
+    filter = {},
+    sort = {},
+    search = "",
+    searchFields = [],
+    page = 1,
+    pageSize = 20,
+    limit = null,
+  } = options;
+
+  try {
+    // 查找目标数据源
+    const targetDataSource = await this.findOne({
+      datasourceid: targetDataSourceId,
+    });
+    if (!targetDataSource) {
+      throw new Error(`数据源 ${targetDataSourceId} 不存在`);
+    }
+
+    // 构建查询条件
+    let query = { appid: targetDataSource.appid };
+
+    // 添加过滤条件
+    if (filter && Object.keys(filter).length > 0) {
+      Object.assign(query, filter);
+    }
+
+    // 添加搜索条件
+    if (search && searchFields.length > 0) {
+      const searchQuery = searchFields.map((field) => ({
+        [field]: { $regex: search, $options: "i" },
+      }));
+      query.$or = searchQuery;
+    }
+
+    // 构建排序条件
+    let sortOptions = {};
+    if (sort && Object.keys(sort).length > 0) {
+      sortOptions = sort;
+    } else {
+      sortOptions = { createdAt: -1 };
+    }
+
+    // 执行查询
+    let queryBuilder = this.find(query).sort(sortOptions);
+
+    // 分页处理
+    if (limit) {
+      queryBuilder = queryBuilder.limit(limit);
+    } else if (pageSize) {
+      const skip = (page - 1) * pageSize;
+      queryBuilder = queryBuilder.skip(skip).limit(pageSize);
+    }
+
+    const results = await queryBuilder.exec();
+
+    // 格式化返回数据
+    const options = results.map((item) => ({
+      label: item[targetField] || item.title || item.name || item._id,
+      value: item[targetValueField] || item._id,
+      data: item,
+    }));
+
+    return {
+      options,
+      total: await this.countDocuments(query),
+      page,
+      pageSize,
+    };
+  } catch (error) {
+    throw new Error(`获取关联选项失败: ${error.message}`);
+  }
+};
+
+// 静态方法 - 验证关联配置
+dataSourceSchema.statics.validateRelation = async function (relation) {
+  if (!relation || !relation.targetDataSourceId) {
+    return { valid: false, error: "关联配置不完整" };
+  }
+
+  try {
+    const targetDataSource = await this.findOne({
+      datasourceid: relation.targetDataSourceId,
+    });
+
+    if (!targetDataSource) {
+      return {
+        valid: false,
+        error: `目标数据源 ${relation.targetDataSourceId} 不存在`,
+      };
+    }
+
+    // 验证字段是否存在
+    if (relation.targetField) {
+      const fieldExists = targetDataSource.dataSource.some(
+        (field) => field.name === relation.targetField
+      );
+      if (!fieldExists) {
+        return {
+          valid: false,
+          error: `目标字段 ${relation.targetField} 不存在`,
+        };
+      }
+    }
+
+    if (relation.targetValueField) {
+      const valueFieldExists = targetDataSource.dataSource.some(
+        (field) => field.name === relation.targetValueField
+      );
+      if (!valueFieldExists) {
+        return {
+          valid: false,
+          error: `目标值字段 ${relation.targetValueField} 不存在`,
+        };
+      }
+    }
+
+    return { valid: true, targetDataSource };
+  } catch (error) {
+    return { valid: false, error: error.message };
+  }
 };
 
 module.exports = mongoose.model("DataSource", dataSourceSchema);

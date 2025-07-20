@@ -9,7 +9,7 @@ export const testDataSourceSchema: DataSourceSchema = [
   {
     title: "用户信息",
     description: "用户基本信息管理",
-    id: "user",
+    datasourceid: "user",
     dataSource: [
       {
         name: "name",
@@ -187,7 +187,7 @@ export const testDataSourceSchema: DataSourceSchema = [
   {
     title: "产品管理",
     description: "产品信息管理系统",
-    id: "product",
+    datasourceid: "product",
     dataSource: [
       {
         name: "productName",
@@ -338,7 +338,7 @@ export const testDataSourceSchema: DataSourceSchema = [
   {
     title: "订单管理",
     description: "订单信息管理系统",
-    id: "order",
+    datasourceid: "order",
     dataSource: [
       {
         name: "orderNumber",
@@ -485,7 +485,7 @@ export const testDataSourceSchema: DataSourceSchema = [
   {
     title: "文章管理",
     description: "文章内容管理系统",
-    id: "article",
+    datasourceid: "article",
     dataSource: [
       {
         name: "title",
@@ -633,7 +633,7 @@ export const testDataSourceSchema: DataSourceSchema = [
   {
     title: "员工管理",
     description: "员工信息管理系统",
-    id: "employee",
+    datasourceid: "employee",
     dataSource: [
       {
         name: "employeeId",

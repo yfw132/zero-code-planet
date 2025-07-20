@@ -163,6 +163,85 @@ router.put("/:datasourceid", async (req, res) => {
   }
 });
 
+// 更新数据源的关联配置
+router.put("/:datasourceid/relations", async (req, res) => {
+  try {
+    const { datasourceid } = req.params;
+    const { relations } = req.body;
+
+    if (!Array.isArray(relations)) {
+      return res.status(400).json({
+        success: false,
+        message: "关联配置格式错误",
+      });
+    }
+
+    // 查找数据源
+    const dataSource = await DataSource.findOne({ datasourceid });
+    if (!dataSource) {
+      return res.status(404).json({
+        success: false,
+        message: "数据源不存在",
+      });
+    }
+
+    // 验证所有关联配置
+    const validationResults = await Promise.all(
+      relations.map(async (relation) => {
+        const validation = await DataSource.validateRelation(relation.relation);
+        return {
+          fieldName: relation.fieldName,
+          validation,
+        };
+      })
+    );
+
+    // 检查是否有无效的关联配置
+    const invalidRelations = validationResults.filter(
+      (result) => !result.validation.valid
+    );
+
+    if (invalidRelations.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "关联配置验证失败",
+        errors: invalidRelations.map((result) => ({
+          fieldName: result.fieldName,
+          error: result.validation.error,
+        })),
+      });
+    }
+
+    // 更新字段的关联配置
+    const updatedDataSource = dataSource.dataSource.map((field) => {
+      const relationConfig = relations.find((r) => r.fieldName === field.name);
+      if (relationConfig) {
+        return {
+          ...field,
+          relation: relationConfig.relation,
+        };
+      }
+      return field;
+    });
+
+    // 保存更新
+    dataSource.dataSource = updatedDataSource;
+    await dataSource.save();
+
+    res.json({
+      success: true,
+      message: "关联配置更新成功",
+      data: dataSource,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "更新关联配置失败",
+      error: error.message,
+    });
+  }
+});
+
 // 发布数据源
 router.post("/:datasourceid/publish", async (req, res) => {
   try {
@@ -346,6 +425,88 @@ router.get("/:datasourceid/fields", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "获取数据源字段失败",
+      error: error.message,
+    });
+  }
+});
+
+// 获取关联数据源的选项
+router.get("/relation/options/:targetDataSourceId", async (req, res) => {
+  try {
+    const { targetDataSourceId } = req.params;
+    const {
+      targetField = "title",
+      targetValueField = "_id",
+      filter = {},
+      sort = {},
+      search = "",
+      searchFields = [],
+      page = 1,
+      pageSize = 20,
+      limit = null,
+    } = req.query;
+
+    // 解析JSON参数
+    const parsedFilter =
+      typeof filter === "string" ? JSON.parse(filter) : filter;
+    const parsedSort = typeof sort === "string" ? JSON.parse(sort) : sort;
+    const parsedSearchFields =
+      typeof searchFields === "string"
+        ? JSON.parse(searchFields)
+        : searchFields;
+
+    const options = {
+      targetField,
+      targetValueField,
+      filter: parsedFilter,
+      sort: parsedSort,
+      search,
+      searchFields: parsedSearchFields,
+      page: parseInt(page),
+      pageSize: parseInt(pageSize),
+      limit: limit ? parseInt(limit) : null,
+    };
+
+    const result = await DataSource.getRelationOptions(
+      targetDataSourceId,
+      options
+    );
+
+    res.json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "获取关联选项失败",
+      error: error.message,
+    });
+  }
+});
+
+// 验证关联配置
+router.post("/relation/validate", async (req, res) => {
+  try {
+    const { relation } = req.body;
+
+    if (!relation) {
+      return res.status(400).json({
+        success: false,
+        message: "关联配置是必需的",
+      });
+    }
+
+    const validation = await DataSource.validateRelation(relation);
+
+    res.json({
+      success: validation.valid,
+      data: validation,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "验证关联配置失败",
       error: error.message,
     });
   }

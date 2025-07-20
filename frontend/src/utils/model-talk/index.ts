@@ -105,16 +105,23 @@ export class AppGenerator {
 
       // 2. 创建数据源到后端
       const createdDataSources: DataSourceItem[] = [];
+      // 由于datasourceid在提交之后会发生变化，所以我需要一个map存储映射关系
+      const map = new Map<string, string>();
 
       for (const ds of dataSourceSchema) {
         try {
+          ds.dataSource.map((field) => {
+            if (field.relation) {
+              field.relation.targetDataSourceId =
+                map.get(field.relation.targetDataSourceId) || "";
+            }
+          });
           const createdDataSource = await createDataSource({
-            title: ds.title,
-            description: ds.description,
+            ...ds,
             appid: this.appid!,
             category: "form",
-            dataSource: ds.dataSource,
           });
+          map.set(ds.datasourceid, createdDataSource.datasourceid);
           createdDataSources.push(createdDataSource);
           console.log("创建的数据源:", createdDataSource);
         } catch (error) {
@@ -174,11 +181,9 @@ export class AppGenerator {
           });
 
           const createdPage = await createPage({
-            pageName: page.pageName,
-            description: page.description,
+            ...page,
             appid: this.appid!,
             components: mappedComponents,
-            order: page.order,
           });
           createdPages.push(createdPage);
           console.log("创建的页面:", createdPage);

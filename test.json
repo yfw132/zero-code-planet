@@ -1,1145 +1,861 @@
 {
-  "appName": "数据管理平台",
-  "appid": "appid1",
-  "description": "企业级数据管理解决方案",
+  "_id": "687ba6739dbdae184426ace4",
+  "appName": "客户关系管理（CRM）系统",
+  "description": "管理客户信息、销售跟踪、售后服务，提升客户满意度和转化率。",
   "pages": [
     {
-      "pageName": "用户数据管理",
-      "pageid": "pageid1",
-      "description": "这是一个用户数据管理页面",
-      "components": [
-        {
-          "componentName": "DataManage",
-          "dataSourceId": "user"
-        }
-      ]
-    },
-    {
-      "pageName": "产品管理",
-      "pageid": "pageid2",
-      "description": "产品信息管理和维护",
+      "_id": "687ba70d9dbdae184426ad28",
+      "pageName": "客户概览",
+      "description": "展示客户基本信息、销售机会和跟进记录的概览",
       "components": [
         {
           "componentName": "DataCard",
-          "dataSourceId": "product"
-        }
-      ]
-    },
-    {
-      "pageName": "订单管理",
-      "pageid": "pageid3",
-      "description": "订单信息管理和处理",
-      "components": [
-        {
-          "componentName": "DataManage",
-          "dataSourceId": "order"
-        }
-      ]
-    },
-    {
-      "pageName": "文章管理",
-      "pageid": "pageid4",
-      "description": "文章内容管理和发布",
-      "components": [
+          "dataSourceId": "ds_01a163360039",
+          "_id": "687ba70d9dbdae184426ad29"
+        },
         {
           "componentName": "DataCard",
-          "dataSourceId": "article"
+          "dataSourceId": "ds_1cb884c7fb45",
+          "_id": "687ba70d9dbdae184426ad2a"
+        },
+        {
+          "componentName": "DataCard",
+          "dataSourceId": "ds_9c82cdbf90f3",
+          "_id": "687ba70d9dbdae184426ad2b"
         }
-      ]
+      ],
+      "appid": "app_546da0474625",
+      "status": "draft",
+      "order": 1,
+      "creator": "system",
+      "pageid": "page_36ff944e473a",
+      "createdAt": "2025-07-19T14:09:17.451Z",
+      "updatedAt": "2025-07-19T14:09:17.451Z",
+      "__v": 0
     },
     {
-      "pageName": "员工管理",
-      "pageid": "pageid5",
-      "description": "员工信息管理和维护",
+      "_id": "687ba70d9dbdae184426ad30",
+      "pageName": "客户管理",
+      "description": "管理客户基本信息，包括新增、编辑和删除客户",
       "components": [
         {
           "componentName": "DataManage",
-          "dataSourceId": "employee"
+          "dataSourceId": "ds_01a163360039",
+          "_id": "687ba70d9dbdae184426ad31"
         }
-      ]
+      ],
+      "appid": "app_546da0474625",
+      "status": "draft",
+      "order": 2,
+      "creator": "system",
+      "pageid": "page_8f65e312da81",
+      "createdAt": "2025-07-19T14:09:17.623Z",
+      "updatedAt": "2025-07-19T14:09:17.623Z",
+      "__v": 0
     },
     {
-      "pageName": "用户数据可视化",
-      "pageid": "pageid6",
-      "description": "这是一个用户数据可视化页面",
+      "_id": "687ba70d9dbdae184426ad36",
+      "pageName": "销售机会跟踪",
+      "description": "跟踪和管理潜在销售机会",
       "components": [
         {
-          "componentName": "DataVisual",
-          "dataSourceId": "user"
+          "componentName": "DataManage",
+          "dataSourceId": "ds_1cb884c7fb45",
+          "_id": "687ba70d9dbdae184426ad37"
         }
-      ]
+      ],
+      "appid": "app_546da0474625",
+      "status": "draft",
+      "order": 3,
+      "creator": "system",
+      "pageid": "page_1044e9972c77",
+      "createdAt": "2025-07-19T14:09:17.793Z",
+      "updatedAt": "2025-07-19T14:09:17.793Z",
+      "__v": 0
+    },
+    {
+      "_id": "687ba70d9dbdae184426ad3c",
+      "pageName": "合同管理",
+      "description": "管理客户合同信息，包括合同签订和到期提醒",
+      "components": [
+        {
+          "componentName": "DataManage",
+          "dataSourceId": "ds_931deba13514",
+          "_id": "687ba70d9dbdae184426ad3d"
+        }
+      ],
+      "appid": "app_546da0474625",
+      "status": "draft",
+      "order": 4,
+      "creator": "system",
+      "pageid": "page_58f8895698a2",
+      "createdAt": "2025-07-19T14:09:17.964Z",
+      "updatedAt": "2025-07-19T14:09:17.964Z",
+      "__v": 0
+    },
+    {
+      "_id": "687ba70e9dbdae184426ad42",
+      "pageName": "售后服务",
+      "description": "记录和处理客户的服务请求",
+      "components": [
+        {
+          "componentName": "DataManage",
+          "dataSourceId": "ds_895ada051abe",
+          "_id": "687ba70e9dbdae184426ad43"
+        }
+      ],
+      "appid": "app_546da0474625",
+      "status": "draft",
+      "order": 5,
+      "creator": "system",
+      "pageid": "page_c43e8cc96b31",
+      "createdAt": "2025-07-19T14:09:18.134Z",
+      "updatedAt": "2025-07-19T14:09:18.134Z",
+      "__v": 0
+    },
+    {
+      "_id": "687ba70e9dbdae184426ad48",
+      "pageName": "客户标签管理",
+      "description": "管理客户标签，用于分类和筛选客户",
+      "components": [
+        {
+          "componentName": "DataManage",
+          "dataSourceId": "ds_5cb1ae6acd29",
+          "_id": "687ba70e9dbdae184426ad49"
+        }
+      ],
+      "appid": "app_546da0474625",
+      "status": "draft",
+      "order": 6,
+      "creator": "system",
+      "pageid": "page_1792d37acf2a",
+      "createdAt": "2025-07-19T14:09:18.317Z",
+      "updatedAt": "2025-07-19T14:09:18.317Z",
+      "__v": 0
     }
   ],
   "dataSource": [
     {
-      "title": "用户信息",
-      "description": "用户基本信息管理",
-      "id": "user",
+      "_id": "687ba6e69dbdae184426ace8",
+      "title": "客户基本信息",
+      "description": "存储客户的基本联系信息和分类数据",
       "dataSource": [
         {
-          "name": "name",
+          "name": "customerName",
           "type": "string",
-          "label": "姓名",
+          "label": "客户名称",
           "control": "input",
-          "config": {
-            "placeholder": "请输入您的姓名"
-          },
           "validation": {
             "required": true,
-            "maxLength": 50
-          }
-        },
-        {
-          "name": "age",
-          "type": "number",
-          "label": "年龄",
-          "control": "number",
-          "config": {
-            "placeholder": "请输入您的年龄"
+            "minLength": 2
           },
-          "validation": {
-            "required": true,
-            "min": 0,
-            "max": 120
-          }
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e69dbdae184426ace9"
         },
         {
-          "name": "email",
+          "name": "contactPerson",
           "type": "string",
-          "label": "邮箱",
-          "control": "email",
-          "config": {
-            "placeholder": "请输入您的邮箱地址"
-          },
-          "validation": {
-            "required": true,
-            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
-          }
+          "label": "联系人",
+          "control": "input",
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e69dbdae184426acea"
         },
         {
           "name": "phone",
           "type": "string",
-          "label": "手机号",
+          "label": "联系电话",
           "control": "tel",
-          "config": {
-            "placeholder": "请输入您的手机号"
-          },
           "validation": {
             "required": true,
             "pattern": "^1[3-9]\\d{9}$"
-          }
-        },
-        {
-          "name": "gender",
-          "type": "string",
-          "label": "性别",
-          "control": "radio",
-          "config": {
-            "options": [
-              {
-                "value": "male",
-                "label": "男"
-              },
-              {
-                "value": "female",
-                "label": "女"
-              },
-              {
-                "value": "other",
-                "label": "其他"
-              }
-            ]
           },
-          "validation": {
-            "required": true
-          }
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e69dbdae184426aceb"
         },
         {
-          "name": "city",
+          "name": "email",
           "type": "string",
-          "label": "所在城市",
+          "label": "电子邮箱",
+          "control": "email",
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e69dbdae184426acec"
+        },
+        {
+          "name": "customerType",
+          "type": "string",
+          "label": "客户类型",
           "control": "select",
           "config": {
             "options": [
               {
-                "value": "beijing",
-                "label": "北京"
+                "label": "普通客户",
+                "value": "normal"
               },
               {
-                "value": "shanghai",
-                "label": "上海"
+                "label": "VIP客户",
+                "value": "vip"
               },
               {
-                "value": "guangzhou",
-                "label": "广州"
-              },
-              {
-                "value": "shenzhen",
-                "label": "深圳"
-              },
-              {
-                "value": "hangzhou",
-                "label": "杭州"
-              },
-              {
-                "value": "chengdu",
-                "label": "成都"
-              },
-              {
-                "value": "other",
-                "label": "其他"
+                "label": "代理商",
+                "value": "agent"
               }
-            ]
+            ],
+            "disabled": false,
+            "readonly": false,
+            "visible": true
           },
-          "validation": {
-            "required": true
-          }
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e69dbdae184426aced"
         },
         {
-          "name": "hobbies",
-          "type": "array",
-          "label": "兴趣爱好",
-          "control": "checkbox",
-          "config": {
-            "options": [
-              {
-                "value": "reading",
-                "label": "阅读"
-              },
-              {
-                "value": "music",
-                "label": "音乐"
-              },
-              {
-                "value": "sports",
-                "label": "运动"
-              },
-              {
-                "value": "travel",
-                "label": "旅行"
-              },
-              {
-                "value": "cooking",
-                "label": "烹饪"
-              },
-              {
-                "value": "photography",
-                "label": "摄影"
-              },
-              {
-                "value": "gaming",
-                "label": "游戏"
-              }
-            ]
-          }
-        },
-        {
-          "name": "birthday",
-          "type": "date",
-          "label": "出生日期",
-          "control": "date"
-        },
-        {
-          "name": "salary",
-          "type": "number",
-          "label": "期望薪资",
-          "control": "number",
-          "config": {
-            "placeholder": "请输入期望薪资",
-            "suffix": "元"
-          },
-          "validation": {
-            "min": 0
-          }
-        },
-        {
-          "name": "experience",
+          "name": "address",
           "type": "string",
-          "label": "工作经验",
-          "control": "select",
-          "config": {
-            "options": [
-              {
-                "value": "fresh",
-                "label": "应届毕业生"
-              },
-              {
-                "value": "1-3",
-                "label": "1-3年"
-              },
-              {
-                "value": "3-5",
-                "label": "3-5年"
-              },
-              {
-                "value": "5-10",
-                "label": "5-10年"
-              },
-              {
-                "value": "10+",
-                "label": "10年以上"
-              }
-            ]
-          }
-        },
-        {
-          "name": "introduction",
-          "type": "string",
-          "label": "个人简介",
+          "label": "详细地址",
           "control": "textarea",
-          "config": {
-            "placeholder": "请简单介绍一下自己",
-            "rows": 4
-          },
-          "validation": {
-            "maxLength": 500
-          }
-        },
-        {
-          "name": "agreement",
-          "type": "boolean",
-          "label": "我同意用户协议和隐私政策",
-          "control": "checkbox",
-          "validation": {
-            "required": true
-          }
-        },
-        {
-          "name": "newsletter",
-          "type": "boolean",
-          "label": "订阅产品更新邮件",
-          "control": "switch",
-          "config": {
-            "default": false
-          }
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e69dbdae184426acee"
         }
-      ]
+      ],
+      "appid": "app_546da0474625",
+      "version": "1.0.0",
+      "status": "draft",
+      "category": "form",
+      "creator": "system",
+      "tags": [],
+      "datasourceid": "ds_01a163360039",
+      "createdAt": "2025-07-19T14:08:38.565Z",
+      "updatedAt": "2025-07-19T14:08:38.565Z",
+      "__v": 0
     },
     {
-      "title": "产品管理",
-      "description": "产品信息管理系统",
-      "id": "product",
+      "_id": "687ba6e69dbdae184426acf3",
+      "title": "销售机会",
+      "description": "记录潜在销售机会和跟踪信息",
       "dataSource": [
         {
-          "name": "productName",
+          "name": "opportunityName",
           "type": "string",
-          "label": "产品名称",
+          "label": "机会名称",
           "control": "input",
-          "config": {
-            "placeholder": "请输入产品名称"
-          },
           "validation": {
-            "required": true,
-            "maxLength": 100
-          }
+            "required": true
+          },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e69dbdae184426acf4"
         },
         {
-          "name": "productCode",
+          "name": "customerId",
           "type": "string",
-          "label": "产品编码",
-          "control": "input",
-          "config": {
-            "placeholder": "请输入产品编码"
-          },
+          "label": "关联客户",
+          "control": "select",
           "validation": {
-            "required": true,
-            "maxLength": 50
-          }
+            "required": true
+          },
+          "dependencies": [],
+          "conditional": null,
+          "relation": {
+            "type": "foreign",
+            "targetDataSourceId": "ds_01a163360039",
+            "targetField": "customerName",
+            "targetValueField": "_id",
+            "filter": {},
+            "sort": {
+              "customerName": 1
+            },
+            "searchable": true,
+            "searchFields": ["customerName", "contactPerson"],
+            "paginated": true,
+            "pageSize": 20
+          },
+          "_id": "687ba6e69dbdae184426acf5"
         },
         {
-          "name": "category",
+          "name": "expectedAmount",
+          "type": "number",
+          "label": "预计金额",
+          "control": "number",
+          "validation": {
+            "required": false,
+            "min": 0
+          },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e69dbdae184426acf6"
+        },
+        {
+          "name": "expectedDate",
+          "type": "date",
+          "label": "预计成交日期",
+          "control": "date",
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e69dbdae184426acf7"
+        },
+        {
+          "name": "stage",
           "type": "string",
-          "label": "产品分类",
+          "label": "销售阶段",
           "control": "select",
           "config": {
             "options": [
               {
-                "value": "electronics",
-                "label": "电子产品"
+                "label": "初步接触",
+                "value": "initial"
               },
               {
-                "value": "clothing",
-                "label": "服装"
+                "label": "需求分析",
+                "value": "analysis"
               },
               {
-                "value": "books",
-                "label": "图书"
+                "label": "方案报价",
+                "value": "proposal"
               },
               {
-                "value": "food",
-                "label": "食品"
+                "label": "谈判中",
+                "value": "negotiation"
               },
               {
-                "value": "sports",
-                "label": "运动用品"
-              },
-              {
-                "value": "beauty",
-                "label": "美妆"
+                "label": "已成交",
+                "value": "closed"
               }
-            ]
+            ],
+            "disabled": false,
+            "readonly": false,
+            "visible": true
           },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e69dbdae184426acf8"
+        },
+        {
+          "name": "winProbability",
+          "type": "number",
+          "label": "成交概率(%)",
+          "control": "number",
+          "validation": {
+            "required": false,
+            "min": 0,
+            "max": 100
+          },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e69dbdae184426acf9"
+        }
+      ],
+      "appid": "app_546da0474625",
+      "version": "1.0.0",
+      "status": "draft",
+      "category": "form",
+      "creator": "system",
+      "tags": [],
+      "datasourceid": "ds_1cb884c7fb45",
+      "createdAt": "2025-07-19T14:08:38.839Z",
+      "updatedAt": "2025-07-19T14:08:38.839Z",
+      "__v": 0
+    },
+    {
+      "_id": "687ba6e79dbdae184426ad1f",
+      "title": "客户标签",
+      "description": "用于标记和分类客户",
+      "dataSource": [
+        {
+          "name": "customerId",
+          "type": "string",
+          "label": "关联客户",
+          "control": "select",
           "validation": {
             "required": true
-          }
-        },
-        {
-          "name": "price",
-          "type": "number",
-          "label": "价格",
-          "control": "number",
-          "config": {
-            "placeholder": "请输入价格",
-            "suffix": "元"
           },
-          "validation": {
-            "required": true,
-            "min": 0
-          }
-        },
-        {
-          "name": "stock",
-          "type": "number",
-          "label": "库存",
-          "control": "number",
-          "config": {
-            "placeholder": "请输入库存数量"
+          "dependencies": [],
+          "conditional": null,
+          "relation": {
+            "type": "foreign",
+            "targetDataSourceId": "ds_01a163360039",
+            "targetField": "customerName",
+            "targetValueField": "_id",
+            "filter": {},
+            "sort": {
+              "customerName": 1
+            },
+            "searchable": true,
+            "searchFields": ["customerName", "contactPerson"],
+            "paginated": true,
+            "pageSize": 20
           },
-          "validation": {
-            "required": true,
-            "min": 0
-          }
-        },
-        {
-          "name": "brand",
-          "type": "string",
-          "label": "品牌",
-          "control": "input",
-          "config": {
-            "placeholder": "请输入品牌名称"
-          },
-          "validation": {
-            "required": true,
-            "maxLength": 50
-          }
-        },
-        {
-          "name": "status",
-          "type": "string",
-          "label": "状态",
-          "control": "radio",
-          "config": {
-            "options": [
-              {
-                "value": "active",
-                "label": "上架"
-              },
-              {
-                "value": "inactive",
-                "label": "下架"
-              },
-              {
-                "value": "draft",
-                "label": "草稿"
-              }
-            ]
-          },
-          "validation": {
-            "required": true
-          }
+          "_id": "687ba6e79dbdae184426ad20"
         },
         {
           "name": "tags",
           "type": "array",
-          "label": "标签",
+          "label": "客户标签",
           "control": "checkbox",
           "config": {
             "options": [
               {
-                "value": "new",
-                "label": "新品"
+                "label": "高潜力",
+                "value": "highPotential"
               },
               {
-                "value": "hot",
-                "label": "热销"
+                "label": "长期合作",
+                "value": "longTerm"
               },
               {
-                "value": "sale",
-                "label": "促销"
+                "label": "价格敏感",
+                "value": "priceSensitive"
               },
               {
-                "value": "limited",
-                "label": "限量"
+                "label": "技术导向",
+                "value": "techOriented"
               },
               {
-                "value": "recommend",
-                "label": "推荐"
+                "label": "投诉客户",
+                "value": "complaint"
               }
-            ]
-          }
+            ],
+            "disabled": false,
+            "readonly": false,
+            "visible": true
+          },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad21"
+        },
+        {
+          "name": "importance",
+          "type": "string",
+          "label": "重要程度",
+          "control": "radio",
+          "config": {
+            "options": [
+              {
+                "label": "高",
+                "value": "high"
+              },
+              {
+                "label": "中",
+                "value": "medium"
+              },
+              {
+                "label": "低",
+                "value": "low"
+              }
+            ],
+            "disabled": false,
+            "readonly": false,
+            "visible": true
+          },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad22"
+        },
+        {
+          "name": "notes",
+          "type": "string",
+          "label": "备注信息",
+          "control": "textarea",
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad23"
+        }
+      ],
+      "appid": "app_546da0474625",
+      "version": "1.0.0",
+      "status": "draft",
+      "category": "form",
+      "creator": "system",
+      "tags": [],
+      "datasourceid": "ds_5cb1ae6acd29",
+      "createdAt": "2025-07-19T14:08:39.765Z",
+      "updatedAt": "2025-07-19T14:08:39.765Z",
+      "__v": 0
+    },
+    {
+      "_id": "687ba6e79dbdae184426ad14",
+      "title": "售后服务",
+      "description": "记录客户的服务请求和处理情况",
+      "dataSource": [
+        {
+          "name": "serviceNo",
+          "type": "string",
+          "label": "服务单号",
+          "control": "input",
+          "validation": {
+            "required": true
+          },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad15"
+        },
+        {
+          "name": "customerId",
+          "type": "string",
+          "label": "关联客户",
+          "control": "select",
+          "validation": {
+            "required": true
+          },
+          "dependencies": [],
+          "conditional": null,
+          "relation": {
+            "type": "foreign",
+            "targetDataSourceId": "ds_01a163360039",
+            "targetField": "customerName",
+            "targetValueField": "_id",
+            "filter": {},
+            "sort": {
+              "customerName": 1
+            },
+            "searchable": true,
+            "searchFields": ["customerName", "contactPerson"],
+            "paginated": true,
+            "pageSize": 20
+          },
+          "_id": "687ba6e79dbdae184426ad16"
+        },
+        {
+          "name": "requestDate",
+          "type": "date",
+          "label": "请求日期",
+          "control": "date",
+          "validation": {
+            "required": true
+          },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad17"
+        },
+        {
+          "name": "serviceType",
+          "type": "string",
+          "label": "服务类型",
+          "control": "select",
+          "config": {
+            "options": [
+              {
+                "label": "咨询",
+                "value": "consult"
+              },
+              {
+                "label": "维修",
+                "value": "repair"
+              },
+              {
+                "label": "投诉",
+                "value": "complaint"
+              },
+              {
+                "label": "其他",
+                "value": "other"
+              }
+            ],
+            "disabled": false,
+            "readonly": false,
+            "visible": true
+          },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad18"
         },
         {
           "name": "description",
           "type": "string",
-          "label": "产品描述",
+          "label": "问题描述",
           "control": "textarea",
-          "config": {
-            "placeholder": "请输入产品描述",
-            "rows": 5
-          },
-          "validation": {
-            "maxLength": 1000
-          }
-        },
-        {
-          "name": "launchDate",
-          "type": "date",
-          "label": "上架日期",
-          "control": "date"
-        },
-        {
-          "name": "featured",
-          "type": "boolean",
-          "label": "精选产品",
-          "control": "switch",
-          "config": {
-            "default": false
-          }
-        }
-      ]
-    },
-    {
-      "title": "订单管理",
-      "description": "订单信息管理系统",
-      "id": "order",
-      "dataSource": [
-        {
-          "name": "orderNumber",
-          "type": "string",
-          "label": "订单号",
-          "control": "input",
-          "config": {
-            "placeholder": "请输入订单号"
-          },
-          "validation": {
-            "required": true,
-            "maxLength": 50
-          }
-        },
-        {
-          "name": "customerName",
-          "type": "string",
-          "label": "客户姓名",
-          "control": "input",
-          "config": {
-            "placeholder": "请输入客户姓名"
-          },
-          "validation": {
-            "required": true,
-            "maxLength": 50
-          }
-        },
-        {
-          "name": "customerPhone",
-          "type": "string",
-          "label": "客户电话",
-          "control": "tel",
-          "config": {
-            "placeholder": "请输入客户电话"
-          },
-          "validation": {
-            "required": true,
-            "pattern": "^1[3-9]\\d{9}$"
-          }
-        },
-        {
-          "name": "totalAmount",
-          "type": "number",
-          "label": "订单金额",
-          "control": "number",
-          "config": {
-            "placeholder": "请输入订单金额",
-            "suffix": "元"
-          },
-          "validation": {
-            "required": true,
-            "min": 0
-          }
-        },
-        {
-          "name": "orderStatus",
-          "type": "string",
-          "label": "订单状态",
-          "control": "select",
-          "config": {
-            "options": [
-              {
-                "value": "pending",
-                "label": "待付款"
-              },
-              {
-                "value": "paid",
-                "label": "已付款"
-              },
-              {
-                "value": "shipped",
-                "label": "已发货"
-              },
-              {
-                "value": "delivered",
-                "label": "已收货"
-              },
-              {
-                "value": "cancelled",
-                "label": "已取消"
-              },
-              {
-                "value": "refunded",
-                "label": "已退款"
-              }
-            ]
-          },
           "validation": {
             "required": true
-          }
-        },
-        {
-          "name": "paymentMethod",
-          "type": "string",
-          "label": "支付方式",
-          "control": "radio",
-          "config": {
-            "options": [
-              {
-                "value": "alipay",
-                "label": "支付宝"
-              },
-              {
-                "value": "wechat",
-                "label": "微信支付"
-              },
-              {
-                "value": "bank",
-                "label": "银行卡"
-              },
-              {
-                "value": "cash",
-                "label": "现金"
-              }
-            ]
           },
-          "validation": {
-            "required": true
-          }
-        },
-        {
-          "name": "shippingAddress",
-          "type": "string",
-          "label": "收货地址",
-          "control": "textarea",
-          "config": {
-            "placeholder": "请输入收货地址",
-            "rows": 3
-          },
-          "validation": {
-            "required": true,
-            "maxLength": 200
-          }
-        },
-        {
-          "name": "orderDate",
-          "type": "date",
-          "label": "下单日期",
-          "control": "date",
-          "validation": {
-            "required": true
-          }
-        },
-        {
-          "name": "deliveryDate",
-          "type": "date",
-          "label": "预计送达日期",
-          "control": "date"
-        },
-        {
-          "name": "urgent",
-          "type": "boolean",
-          "label": "加急订单",
-          "control": "switch",
-          "config": {
-            "default": false
-          }
-        },
-        {
-          "name": "notes",
-          "type": "string",
-          "label": "备注",
-          "control": "textarea",
-          "config": {
-            "placeholder": "请输入备注信息",
-            "rows": 3
-          },
-          "validation": {
-            "maxLength": 500
-          }
-        }
-      ]
-    },
-    {
-      "title": "文章管理",
-      "description": "文章内容管理系统",
-      "id": "article",
-      "dataSource": [
-        {
-          "name": "title",
-          "type": "string",
-          "label": "文章标题",
-          "control": "input",
-          "config": {
-            "placeholder": "请输入文章标题"
-          },
-          "validation": {
-            "required": true,
-            "maxLength": 100
-          }
-        },
-        {
-          "name": "author",
-          "type": "string",
-          "label": "作者",
-          "control": "input",
-          "config": {
-            "placeholder": "请输入作者姓名"
-          },
-          "validation": {
-            "required": true,
-            "maxLength": 50
-          }
-        },
-        {
-          "name": "category",
-          "type": "string",
-          "label": "分类",
-          "control": "select",
-          "config": {
-            "options": [
-              {
-                "value": "tech",
-                "label": "技术"
-              },
-              {
-                "value": "business",
-                "label": "商业"
-              },
-              {
-                "value": "lifestyle",
-                "label": "生活"
-              },
-              {
-                "value": "travel",
-                "label": "旅游"
-              },
-              {
-                "value": "food",
-                "label": "美食"
-              },
-              {
-                "value": "sports",
-                "label": "体育"
-              }
-            ]
-          },
-          "validation": {
-            "required": true
-          }
-        },
-        {
-          "name": "tags",
-          "type": "array",
-          "label": "标签",
-          "control": "checkbox",
-          "config": {
-            "options": [
-              {
-                "value": "trending",
-                "label": "热门"
-              },
-              {
-                "value": "featured",
-                "label": "精选"
-              },
-              {
-                "value": "original",
-                "label": "原创"
-              },
-              {
-                "value": "tutorial",
-                "label": "教程"
-              },
-              {
-                "value": "news",
-                "label": "资讯"
-              }
-            ]
-          }
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad19"
         },
         {
           "name": "status",
           "type": "string",
-          "label": "状态",
-          "control": "radio",
+          "label": "处理状态",
+          "control": "select",
           "config": {
             "options": [
               {
-                "value": "draft",
-                "label": "草稿"
+                "label": "待处理",
+                "value": "pending"
               },
               {
-                "value": "published",
-                "label": "已发布"
+                "label": "处理中",
+                "value": "processing"
               },
               {
-                "value": "archived",
-                "label": "已归档"
+                "label": "已完成",
+                "value": "completed"
               }
-            ]
+            ],
+            "disabled": false,
+            "readonly": false,
+            "visible": true
           },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad1a"
+        }
+      ],
+      "appid": "app_546da0474625",
+      "version": "1.0.0",
+      "status": "draft",
+      "category": "form",
+      "creator": "system",
+      "tags": [],
+      "datasourceid": "ds_895ada051abe",
+      "createdAt": "2025-07-19T14:08:39.585Z",
+      "updatedAt": "2025-07-19T14:08:39.585Z",
+      "__v": 0
+    },
+    {
+      "_id": "687ba6e79dbdae184426ad08",
+      "title": "合同信息",
+      "description": "记录与客户签订的合同信息",
+      "dataSource": [
+        {
+          "name": "contractNo",
+          "type": "string",
+          "label": "合同编号",
+          "control": "input",
           "validation": {
             "required": true
-          }
-        },
-        {
-          "name": "publishDate",
-          "type": "date",
-          "label": "发布日期",
-          "control": "date"
-        },
-        {
-          "name": "readTime",
-          "type": "number",
-          "label": "阅读时间",
-          "control": "number",
-          "config": {
-            "placeholder": "请输入预计阅读时间",
-            "suffix": "分钟"
           },
-          "validation": {
-            "min": 1,
-            "max": 999
-          }
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad09"
         },
         {
-          "name": "summary",
+          "name": "customerId",
           "type": "string",
-          "label": "摘要",
-          "control": "textarea",
-          "config": {
-            "placeholder": "请输入文章摘要",
-            "rows": 3
-          },
+          "label": "关联客户",
+          "control": "select",
           "validation": {
-            "maxLength": 300
-          }
+            "required": true
+          },
+          "dependencies": [],
+          "conditional": null,
+          "relation": {
+            "type": "foreign",
+            "targetDataSourceId": "ds_01a163360039",
+            "targetField": "customerName",
+            "targetValueField": "_id",
+            "filter": {},
+            "sort": {
+              "customerName": 1
+            },
+            "searchable": true,
+            "searchFields": ["customerName", "contactPerson"],
+            "paginated": true,
+            "pageSize": 20
+          },
+          "_id": "687ba6e79dbdae184426ad0a"
+        },
+        {
+          "name": "signDate",
+          "type": "date",
+          "label": "签订日期",
+          "control": "date",
+          "validation": {
+            "required": true
+          },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad0b"
+        },
+        {
+          "name": "amount",
+          "type": "number",
+          "label": "合同金额",
+          "control": "number",
+          "validation": {
+            "required": false,
+            "min": 0
+          },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad0c"
+        },
+        {
+          "name": "startDate",
+          "type": "date",
+          "label": "生效日期",
+          "control": "date",
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad0d"
+        },
+        {
+          "name": "endDate",
+          "type": "date",
+          "label": "截止日期",
+          "control": "date",
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad0e"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "label": "合同状态",
+          "control": "select",
+          "config": {
+            "options": [
+              {
+                "label": "执行中",
+                "value": "executing"
+              },
+              {
+                "label": "已完成",
+                "value": "completed"
+              },
+              {
+                "label": "已终止",
+                "value": "terminated"
+              }
+            ],
+            "disabled": false,
+            "readonly": false,
+            "visible": true
+          },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad0f"
+        }
+      ],
+      "appid": "app_546da0474625",
+      "version": "1.0.0",
+      "status": "draft",
+      "category": "form",
+      "creator": "system",
+      "tags": [],
+      "datasourceid": "ds_931deba13514",
+      "createdAt": "2025-07-19T14:08:39.390Z",
+      "updatedAt": "2025-07-19T14:08:39.390Z",
+      "__v": 0
+    },
+    {
+      "_id": "687ba6e79dbdae184426acfe",
+      "title": "客户跟进记录",
+      "description": "记录与客户的沟通和跟进历史",
+      "dataSource": [
+        {
+          "name": "customerId",
+          "type": "string",
+          "label": "关联客户",
+          "control": "select",
+          "validation": {
+            "required": true
+          },
+          "dependencies": [],
+          "conditional": null,
+          "relation": {
+            "type": "foreign",
+            "targetDataSourceId": "ds_01a163360039",
+            "targetField": "customerName",
+            "targetValueField": "_id",
+            "filter": {},
+            "sort": {
+              "customerName": 1
+            },
+            "searchable": true,
+            "searchFields": ["customerName", "contactPerson"],
+            "paginated": true,
+            "pageSize": 20
+          },
+          "_id": "687ba6e79dbdae184426acff"
+        },
+        {
+          "name": "followupDate",
+          "type": "date",
+          "label": "跟进日期",
+          "control": "date",
+          "validation": {
+            "required": true
+          },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad00"
+        },
+        {
+          "name": "followupType",
+          "type": "string",
+          "label": "跟进方式",
+          "control": "select",
+          "config": {
+            "options": [
+              {
+                "label": "电话",
+                "value": "phone"
+              },
+              {
+                "label": "拜访",
+                "value": "visit"
+              },
+              {
+                "label": "邮件",
+                "value": "email"
+              },
+              {
+                "label": "会议",
+                "value": "meeting"
+              }
+            ],
+            "disabled": false,
+            "readonly": false,
+            "visible": true
+          },
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad01"
         },
         {
           "name": "content",
           "type": "string",
-          "label": "内容",
+          "label": "跟进内容",
           "control": "textarea",
-          "config": {
-            "placeholder": "请输入文章内容",
-            "rows": 10
-          },
-          "validation": {
-            "required": true,
-            "maxLength": 10000
-          }
-        },
-        {
-          "name": "featured",
-          "type": "boolean",
-          "label": "推荐文章",
-          "control": "switch",
-          "config": {
-            "default": false
-          }
-        },
-        {
-          "name": "allowComments",
-          "type": "boolean",
-          "label": "允许评论",
-          "control": "switch",
-          "config": {
-            "default": true
-          }
-        }
-      ]
-    },
-    {
-      "title": "员工管理",
-      "description": "员工信息管理系统",
-      "id": "employee",
-      "dataSource": [
-        {
-          "name": "employeeId",
-          "type": "string",
-          "label": "员工编号",
-          "control": "input",
-          "config": {
-            "placeholder": "请输入员工编号"
-          },
-          "validation": {
-            "required": true,
-            "maxLength": 20
-          }
-        },
-        {
-          "name": "fullName",
-          "type": "string",
-          "label": "姓名",
-          "control": "input",
-          "config": {
-            "placeholder": "请输入员工姓名"
-          },
-          "validation": {
-            "required": true,
-            "maxLength": 50
-          }
-        },
-        {
-          "name": "department",
-          "type": "string",
-          "label": "部门",
-          "control": "select",
-          "config": {
-            "options": [
-              {
-                "value": "tech",
-                "label": "技术部"
-              },
-              {
-                "value": "product",
-                "label": "产品部"
-              },
-              {
-                "value": "design",
-                "label": "设计部"
-              },
-              {
-                "value": "marketing",
-                "label": "市场部"
-              },
-              {
-                "value": "sales",
-                "label": "销售部"
-              },
-              {
-                "value": "hr",
-                "label": "人事部"
-              },
-              {
-                "value": "finance",
-                "label": "财务部"
-              }
-            ]
-          },
           "validation": {
             "required": true
-          }
-        },
-        {
-          "name": "position",
-          "type": "string",
-          "label": "职位",
-          "control": "input",
-          "config": {
-            "placeholder": "请输入职位"
           },
-          "validation": {
-            "required": true,
-            "maxLength": 50
-          }
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad02"
         },
         {
-          "name": "level",
-          "type": "string",
-          "label": "级别",
-          "control": "select",
-          "config": {
-            "options": [
-              {
-                "value": "intern",
-                "label": "实习生"
-              },
-              {
-                "value": "junior",
-                "label": "初级"
-              },
-              {
-                "value": "middle",
-                "label": "中级"
-              },
-              {
-                "value": "senior",
-                "label": "高级"
-              },
-              {
-                "value": "lead",
-                "label": "组长"
-              },
-              {
-                "value": "manager",
-                "label": "经理"
-              },
-              {
-                "value": "director",
-                "label": "总监"
-              }
-            ]
-          },
-          "validation": {
-            "required": true
-          }
-        },
-        {
-          "name": "email",
-          "type": "string",
-          "label": "邮箱",
-          "control": "email",
-          "config": {
-            "placeholder": "请输入邮箱地址"
-          },
-          "validation": {
-            "required": true,
-            "pattern": "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"
-          }
-        },
-        {
-          "name": "phone",
-          "type": "string",
-          "label": "手机号",
-          "control": "tel",
-          "config": {
-            "placeholder": "请输入手机号"
-          },
-          "validation": {
-            "required": true,
-            "pattern": "^1[3-9]\\d{9}$"
-          }
-        },
-        {
-          "name": "hireDate",
+          "name": "nextFollowupDate",
           "type": "date",
-          "label": "入职日期",
+          "label": "下次跟进日期",
           "control": "date",
-          "validation": {
-            "required": true
-          }
-        },
-        {
-          "name": "salary",
-          "type": "number",
-          "label": "薪资",
-          "control": "number",
-          "config": {
-            "placeholder": "请输入薪资",
-            "suffix": "元"
-          },
-          "validation": {
-            "required": true,
-            "min": 0
-          }
-        },
-        {
-          "name": "skills",
-          "type": "array",
-          "label": "技能",
-          "control": "checkbox",
-          "config": {
-            "options": [
-              {
-                "value": "javascript",
-                "label": "JavaScript"
-              },
-              {
-                "value": "python",
-                "label": "Python"
-              },
-              {
-                "value": "java",
-                "label": "Java"
-              },
-              {
-                "value": "react",
-                "label": "React"
-              },
-              {
-                "value": "vue",
-                "label": "Vue"
-              },
-              {
-                "value": "nodejs",
-                "label": "Node.js"
-              },
-              {
-                "value": "mysql",
-                "label": "MySQL"
-              },
-              {
-                "value": "mongodb",
-                "label": "MongoDB"
-              }
-            ]
-          }
-        },
-        {
-          "name": "status",
-          "type": "string",
-          "label": "状态",
-          "control": "radio",
-          "config": {
-            "options": [
-              {
-                "value": "active",
-                "label": "在职"
-              },
-              {
-                "value": "leave",
-                "label": "请假"
-              },
-              {
-                "value": "resigned",
-                "label": "离职"
-              }
-            ]
-          },
-          "validation": {
-            "required": true
-          }
-        },
-        {
-          "name": "notes",
-          "type": "string",
-          "label": "备注",
-          "control": "textarea",
-          "config": {
-            "placeholder": "请输入备注信息",
-            "rows": 3
-          },
-          "validation": {
-            "maxLength": 500
-          }
-        },
-        {
-          "name": "remote",
-          "type": "boolean",
-          "label": "远程办公",
-          "control": "switch",
-          "config": {
-            "default": false
-          }
+          "dependencies": [],
+          "conditional": null,
+          "_id": "687ba6e79dbdae184426ad03"
         }
-      ]
+      ],
+      "appid": "app_546da0474625",
+      "version": "1.0.0",
+      "status": "draft",
+      "category": "form",
+      "creator": "system",
+      "tags": [],
+      "datasourceid": "ds_9c82cdbf90f3",
+      "createdAt": "2025-07-19T14:08:39.130Z",
+      "updatedAt": "2025-07-19T14:08:39.130Z",
+      "__v": 0
     }
-  ]
+  ],
+  "version": "1.0.0",
+  "status": "draft",
+  "creator": "system",
+  "tags": [],
+  "appid": "app_546da0474625",
+  "createdAt": "2025-07-19T14:06:43.030Z",
+  "updatedAt": "2025-07-19T14:09:18.397Z",
+  "__v": 0
 }

@@ -44,12 +44,26 @@ export function generatePrompt(params: GenerateDataSourceParams): string {
    - control: 控件类型（input/number/email/tel/textarea/select/radio/checkbox/date/switch）
    - validation: 验证规则（可选）
    - config: 字段配置（可选）
+   - relation: 关联配置（可选，用于关联其他数据源）
+
+关联配置（relation）说明：
+当字段需要关联其他数据源时，可以添加relation配置：
+- type: 关联类型，固定为"foreign"
+- targetDataSourceId: 目标数据源的ID（格式如"ds_xxxxxxxxxxxx"）
+- targetField: 用于显示的字段名（如"customerName"）
+- targetValueField: 用于值的字段名（通常为"_id"）
+- filter: 过滤条件（可选）
+- sort: 排序条件（可选）
+- searchable: 是否支持搜索（可选，默认false）
+- searchFields: 搜索字段数组（可选）
+- paginated: 是否支持分页（可选，默认false）
+- pageSize: 每页数量（可选，默认20）
 
 请严格按照以下JSON格式返回，不要包含任何其他文字：
 
 [
   {
-    "id": "ds_1",
+    "datasourceid": "ds_1",
     "title": "数据源标题",
     "description": "数据源描述",
     "dataSource": [
@@ -65,6 +79,26 @@ export function generatePrompt(params: GenerateDataSourceParams): string {
         "config": {
           "placeholder": "请输入..."
         }
+      },
+      {
+        "name": "relatedField",
+        "type": "string",
+        "label": "关联字段",
+        "control": "select",
+        "validation": {
+          "required": true
+        },
+        "relation": {
+          "type": "foreign",
+          "targetDataSourceId": "ds_xxxxxxxxxxxx",
+          "targetField": "title",
+          "targetValueField": "_id",
+          "searchable": true,
+          "searchFields": ["title", "name"],
+          "sort": {
+            "title": 1
+          }
+        }
       }
     ]
   }
@@ -75,8 +109,14 @@ export function generatePrompt(params: GenerateDataSourceParams): string {
 2. 根据业务场景选择合适的控件类型
 3. 为重要字段添加适当的验证规则
 4. 数据源数量控制在${dataSourceCount}个
-5. 所有的表都会自动生成 id、createTime、updateTime 字段，不要在这里添加
-6. 确保返回的是有效的JSON格式`;
+5. 所有的表都会自动生成 id、createTime、updateTime 字段，不要在dataSource这里添加
+6. 确保返回的是有效的JSON格式
+7. 当设计关联字段时，确保关联的数据源ID格式正确（ds_开头加12位字符）
+8. 关联字段通常使用select控件类型
+9. 关联配置中的targetDataSourceId应该指向已存在的其他数据源
+10. 数据源ID（datasourceid）必须唯一且格式为"ds_"开头加12位字符
+11. 关联字段的targetDataSourceId必须与某个数据源的datasourceid完全匹配
+12. 一定要先定义主数据源，再定义关联数据源，确保关联关系正确`;
 }
 
 // 将模型返回的string处理成JSON
@@ -177,12 +217,54 @@ function validateAndFixField(field: any): FormField {
     };
   }
 
+  // 关联配置处理
+  if (field.relation) {
+    const validRelationTypes = ["foreign", "lookup", "cascade"];
+
+    // 检查relation对象是否有效（至少包含必要的属性）
+    const hasValidRelation =
+      field.relation.targetDataSourceId &&
+      field.relation.type &&
+      validRelationTypes.includes(field.relation.type);
+
+    if (hasValidRelation) {
+      validatedField.relation = {
+        type: validRelationTypes.includes(field.relation.type)
+          ? field.relation.type
+          : "foreign",
+        targetDataSourceId: field.relation.targetDataSourceId || "",
+        targetField: field.relation.targetField || undefined,
+        targetValueField: field.relation.targetValueField || undefined,
+        filter:
+          field.relation.filter && typeof field.relation.filter === "object"
+            ? field.relation.filter
+            : undefined,
+        sort:
+          field.relation.sort && typeof field.relation.sort === "object"
+            ? field.relation.sort
+            : undefined,
+        searchable: !!field.relation.searchable,
+        searchFields: Array.isArray(field.relation.searchFields)
+          ? field.relation.searchFields
+          : undefined,
+        paginated: !!field.relation.paginated,
+        pageSize:
+          typeof field.relation.pageSize === "number" &&
+          field.relation.pageSize > 0
+            ? field.relation.pageSize
+            : 20,
+      };
+    }
+    // 如果relation无效，则不添加relation字段（保持undefined）
+  }
+
   return validatedField;
 }
 
 // 验证和修复数据源项目
 function validateAndFixDataSourceItem(item: any): DataSourceItem {
   return {
+    datasourceid: item.datasourceid || "",
     title: item.title || "未命名数据源",
     description: item.description || "",
     dataSource: Array.isArray(item.dataSource)
@@ -211,6 +293,7 @@ export function preHandleModelResponse(data: any): DataSourceSchema {
     if (validatedData.length === 0) {
       // 兜底策略：创建一个默认的数据源
       validatedData.push({
+        datasourceid: "",
         title: "默认数据源",
         description: "系统自动生成的默认数据源",
         dataSource: [
@@ -236,6 +319,7 @@ export function preHandleModelResponse(data: any): DataSourceSchema {
     // 兜底策略：返回一个基础的数据源
     return [
       {
+        datasourceid: "",
         title: "基础数据源",
         description: "系统自动生成的基础数据源",
         dataSource: [
@@ -293,6 +377,7 @@ export async function generateDataSource(
     // 兜底策略：返回基础数据源
     return [
       {
+        datasourceid: "",
         title: "错误恢复数据源",
         description: "生成失败时的恢复数据源",
         dataSource: [
