@@ -800,7 +800,7 @@ const loadRelationOptions = async (field: FormField) => {
 };
 
 const handleRelationSearch = async (field: FormField, query: string) => {
-  if (!field.relation?.targetDataSourceId || !field.relation.searchable) return;
+  if (!field.relation?.targetDataSourceId) return;
 
   const cacheKey = field.relation.targetDataSourceId;
   relationLoadingCache.value[cacheKey] = true;

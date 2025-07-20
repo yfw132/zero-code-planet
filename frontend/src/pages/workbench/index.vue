@@ -66,7 +66,7 @@
           <div v-if="isGenerating" class="generation-progress">
             <div class="progress-header">
               <h4>AI正在为您生成项目</h4>
-              <p>预计总耗时：1-2分钟</p>
+              <p>预计总耗时：2-3分钟</p>
             </div>
 
             <div class="steps-container">
@@ -378,7 +378,13 @@ const generationSteps = ref([
     description: "AI正在生成页面布局和组件...",
     duration: "30-60秒",
   },
-  { id: 4, name: "完成创建", description: "项目创建完成！", duration: "约3秒" },
+  {
+    id: 4,
+    name: "生成Mock数据",
+    description: "AI正在生成测试数据...",
+    duration: "20-40秒",
+  },
+  { id: 5, name: "完成创建", description: "项目创建完成！", duration: "约3秒" },
 ]);
 
 // 项目相关
@@ -453,8 +459,12 @@ const generateProject = async () => {
     currentStep.value = 3;
     await newApp.generateAndCreatePages(appConfig);
 
-    // 步骤4: 完成
+    // 步骤4: 生成并插入mock数据
     currentStep.value = 4;
+    await newApp.generateAndInsertMockData(10); // 每个数据源生成10条mock数据
+
+    // 步骤5: 完成
+    currentStep.value = 5;
     ElMessage.success("项目创建成功，请在项目列表中查看");
     // 加载项目列表
     loadProjects();

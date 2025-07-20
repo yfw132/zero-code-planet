@@ -5,12 +5,15 @@
 
 import { generateDataSource } from "./generate-data-source";
 import { generatePage } from "./generate-page";
+import { generateMockData, type MockDataSchema } from "./generate-mock-data";
 import { createApp, updateApp, getAppInfo } from "@/api/app";
 import { createDataSource } from "@/api/dataSource";
 import { createPage } from "@/api/page";
+import { createRecord } from "@/api/crud";
 import type { AppItem } from "@/api/app";
 import type { DataSourceItem } from "@/api/dataSource";
 import type { PageItem } from "@/api/page";
+import type { DataSourceSchema } from "@/types/dataSource";
 
 export interface AppConfig {
   appName: string;
@@ -300,5 +303,104 @@ export class AppGenerator {
    */
   getPages(): PageItem[] {
     return this.pages;
+  }
+
+  /**
+   * 生成并插入mock数据（合并操作）
+   * @param recordCount 每个数据源的记录数量，默认10条
+   * @returns 插入的记录统计信息
+   */
+  async generateAndInsertMockData(recordCount: number = 10): Promise<{
+    totalRecords: number;
+    dataSourceStats: Array<{
+      datasourceid: string;
+      title: string;
+      insertedCount: number;
+    }>;
+  }> {
+    if (!this.appInfo) {
+      throw new Error("应用信息未初始化，请先调用 createApp 或 initialize");
+    }
+
+    if (this.dataSources.length === 0) {
+      throw new Error("没有可用的数据源，请先生成数据源");
+    }
+
+    try {
+      console.log(
+        "开始生成并插入mock数据，数据源数量:",
+        this.dataSources.length
+      );
+
+      // 1. 生成mock数据
+      const mockDataSchema = await generateMockData({
+        dataSourceSchema: this.dataSources as DataSourceSchema,
+        recordCount: recordCount,
+      });
+
+      console.log("生成的mock数据:", mockDataSchema);
+
+      // 2. 插入mock数据到后端
+      const dataSourceStats: Array<{
+        datasourceid: string;
+        title: string;
+        insertedCount: number;
+      }> = [];
+      let totalRecords = 0;
+
+      // 按顺序插入数据，确保关联关系正确
+      for (const mockDataSource of mockDataSchema) {
+        try {
+          let insertedCount = 0;
+          console.log(`开始插入数据源 "${mockDataSource.title}" 的记录...`);
+
+          // 插入该数据源的所有记录
+          for (const record of mockDataSource.records) {
+            try {
+              await createRecord(mockDataSource.datasourceid, record);
+              insertedCount++;
+              totalRecords++;
+              console.log(
+                `成功插入记录 ${insertedCount}/${mockDataSource.records.length}`
+              );
+            } catch (error) {
+              console.error(`插入记录失败:`, error);
+              // 继续插入其他记录，不中断整个流程
+            }
+          }
+
+          dataSourceStats.push({
+            datasourceid: mockDataSource.datasourceid,
+            title: mockDataSource.title,
+            insertedCount: insertedCount,
+          });
+
+          console.log(
+            `数据源 "${mockDataSource.title}" 插入完成，共插入 ${insertedCount} 条记录`
+          );
+        } catch (error) {
+          console.error(`插入数据源 "${mockDataSource.title}" 失败:`, error);
+          // 记录失败的数据源，但继续处理其他数据源
+          dataSourceStats.push({
+            datasourceid: mockDataSource.datasourceid,
+            title: mockDataSource.title,
+            insertedCount: 0,
+          });
+        }
+      }
+
+      console.log("Mock数据插入完成，统计信息:", {
+        totalRecords,
+        dataSourceStats,
+      });
+
+      return {
+        totalRecords,
+        dataSourceStats,
+      };
+    } catch (error) {
+      console.error("生成并插入mock数据失败:", error);
+      throw new Error(`生成并插入mock数据失败: ${error}`);
+    }
   }
 }
