@@ -1,6 +1,5 @@
 import request from "../utils/request";
-import type { PageItem } from "./page";
-import type { DataSourceItem } from "./dataSource";
+import { PageItem, DataSourceItem } from "../types/frontend";
 
 const path = "appManage";
 

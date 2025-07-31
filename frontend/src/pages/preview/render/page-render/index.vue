@@ -9,8 +9,8 @@
         :key="item.dataSourceId"
         :dataSourceSchema="item.dataSourceSchema"
       />
-      <DataVisual
-        v-if="item.componentName === 'DataVisual'"
+      <Dashboard
+        v-if="item.componentName === 'Dashboard'"
         :key="item.dataSourceId"
         :dataSourceSchema="item.dataSourceSchema"
       />
@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DataManage from "../component-render/data-manage/index.vue";
-import DataVisual from "../component-render/data-visual/index.vue";
+import Dashboard from "../component-render/dashboard/index.vue";
 import DataCard from "../component-render/data-card/index.vue";
 import { PageComponentDetail } from "../../../../types/page";
 import type { AppFullData } from "@/api/app";

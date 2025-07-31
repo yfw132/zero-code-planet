@@ -1,9 +1,11 @@
 /**
- * 数据源架构类型定义
- * 用于定义动态表单的数据结构和验证规则
+ * 数据源基础类型定义
+ * 包含数据源相关的核心业务类型
  */
 
-// ==================== 基础类型定义 ====================
+import { FieldOption } from "./common";
+
+// ==================== 表单相关类型 ====================
 
 /**
  * 表单控件类型
@@ -31,15 +33,6 @@ export type FormFieldDataType =
   | "boolean" // 布尔类型
   | "date" // 日期类型
   | "array"; // 数组类型
-
-/**
- * 字段选项接口
- * 用于 select、radio、checkbox 等控件的选项定义
- */
-export interface FieldOption {
-  value: string | number;
-  label: string;
-}
 
 // ==================== 验证规则定义 ====================
 
@@ -117,24 +110,16 @@ export interface FormField {
   relation?: RelationConfig; // 关联配置
 }
 
-// ==================== 数据源定义 ====================
+// ==================== 数据源核心定义 ====================
 
 /**
- * 数据源项目接口
- * 定义单个数据源的完整结构
+ * 数据源核心业务接口 - 不包含API特有字段
+ * 定义数据源的核心业务属性
  */
-export interface DataSourceItem {
+export interface DataSourceCore {
   datasourceid: string; // 数据源ID
   title: string; // 标题
   description: string; // 描述
   dataSource: FormField[]; // 字段列表
   version?: string; // 版本号
-  createdAt?: string; // 创建时间
-  updatedAt?: string; // 更新时间
 }
-
-/**
- * 数据源架构类型
- * 数据源项目的数组
- */
-export type DataSourceSchema = DataSourceItem[];

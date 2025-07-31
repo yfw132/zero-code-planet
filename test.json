@@ -9,19 +9,9 @@
       "description": "展示客户基本信息、销售机会和跟进记录的概览",
       "components": [
         {
-          "componentName": "DataCard",
+          "componentName": "Dashboard",
           "dataSourceId": "ds_01a163360039",
           "_id": "687ba70d9dbdae184426ad29"
-        },
-        {
-          "componentName": "DataCard",
-          "dataSourceId": "ds_1cb884c7fb45",
-          "_id": "687ba70d9dbdae184426ad2a"
-        },
-        {
-          "componentName": "DataCard",
-          "dataSourceId": "ds_9c82cdbf90f3",
-          "_id": "687ba70d9dbdae184426ad2b"
         }
       ],
       "appid": "app_546da0474625",
@@ -71,66 +61,6 @@
       "pageid": "page_1044e9972c77",
       "createdAt": "2025-07-19T14:09:17.793Z",
       "updatedAt": "2025-07-19T14:09:17.793Z",
-      "__v": 0
-    },
-    {
-      "_id": "687ba70d9dbdae184426ad3c",
-      "pageName": "合同管理",
-      "description": "管理客户合同信息，包括合同签订和到期提醒",
-      "components": [
-        {
-          "componentName": "DataManage",
-          "dataSourceId": "ds_931deba13514",
-          "_id": "687ba70d9dbdae184426ad3d"
-        }
-      ],
-      "appid": "app_546da0474625",
-      "status": "draft",
-      "order": 4,
-      "creator": "system",
-      "pageid": "page_58f8895698a2",
-      "createdAt": "2025-07-19T14:09:17.964Z",
-      "updatedAt": "2025-07-19T14:09:17.964Z",
-      "__v": 0
-    },
-    {
-      "_id": "687ba70e9dbdae184426ad42",
-      "pageName": "售后服务",
-      "description": "记录和处理客户的服务请求",
-      "components": [
-        {
-          "componentName": "DataManage",
-          "dataSourceId": "ds_895ada051abe",
-          "_id": "687ba70e9dbdae184426ad43"
-        }
-      ],
-      "appid": "app_546da0474625",
-      "status": "draft",
-      "order": 5,
-      "creator": "system",
-      "pageid": "page_c43e8cc96b31",
-      "createdAt": "2025-07-19T14:09:18.134Z",
-      "updatedAt": "2025-07-19T14:09:18.134Z",
-      "__v": 0
-    },
-    {
-      "_id": "687ba70e9dbdae184426ad48",
-      "pageName": "客户标签管理",
-      "description": "管理客户标签，用于分类和筛选客户",
-      "components": [
-        {
-          "componentName": "DataManage",
-          "dataSourceId": "ds_5cb1ae6acd29",
-          "_id": "687ba70e9dbdae184426ad49"
-        }
-      ],
-      "appid": "app_546da0474625",
-      "status": "draft",
-      "order": 6,
-      "creator": "system",
-      "pageid": "page_1792d37acf2a",
-      "createdAt": "2025-07-19T14:09:18.317Z",
-      "updatedAt": "2025-07-19T14:09:18.317Z",
       "__v": 0
     }
   ],

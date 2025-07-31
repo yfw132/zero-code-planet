@@ -1,12 +1,25 @@
 import request from "../utils/request";
+import {
+  PageCore,
+  ApiPageItem,
+  CreatePageRequest,
+  UpdatePageRequest,
+  PageListResponse,
+  PageDetailResponse,
+  PageReorderRequest,
+  SuccessResponse,
+  EntityStatus,
+} from "../types";
 
 const path = "pageManage";
+
+// ==================== API接口函数 ====================
 
 // 获取应用的所有页面
 export function getAppPages(
   appid: string,
-  params?: { status?: string }
-): Promise<PageItem[]> {
+  params?: { status?: EntityStatus }
+): Promise<PageListResponse> {
   return request({
     url: `api/${path}/app/${appid}`,
     method: "get",
@@ -15,7 +28,7 @@ export function getAppPages(
 }
 
 // 获取页面详情
-export function getPageInfo(pageid: string): Promise<PageItem> {
+export function getPageInfo(pageid: string): Promise<PageDetailResponse> {
   return request({
     url: `api/${path}/${pageid}`,
     method: "get",
@@ -23,7 +36,7 @@ export function getPageInfo(pageid: string): Promise<PageItem> {
 }
 
 // 创建新页面
-export function createPage(data: CreatePageRequest): Promise<PageItem> {
+export function createPage(data: CreatePageRequest): Promise<ApiPageItem> {
   return request({
     url: `api/${path}`,
     method: "post",
@@ -35,7 +48,7 @@ export function createPage(data: CreatePageRequest): Promise<PageItem> {
 export function updatePage(
   pageid: string,
   data: UpdatePageRequest
-): Promise<PageItem> {
+): Promise<ApiPageItem> {
   return request({
     url: `api/${path}/${pageid}`,
     method: "put",
@@ -44,7 +57,7 @@ export function updatePage(
 }
 
 // 发布页面
-export function publishPage(pageid: string): Promise<PageItem> {
+export function publishPage(pageid: string): Promise<ApiPageItem> {
   return request({
     url: `api/${path}/${pageid}/publish`,
     method: "post",
@@ -52,7 +65,7 @@ export function publishPage(pageid: string): Promise<PageItem> {
 }
 
 // 归档页面
-export function archivePage(pageid: string): Promise<PageItem> {
+export function archivePage(pageid: string): Promise<ApiPageItem> {
   return request({
     url: `api/${path}/${pageid}/archive`,
     method: "post",
@@ -60,7 +73,7 @@ export function archivePage(pageid: string): Promise<PageItem> {
 }
 
 // 删除页面
-export function deletePage(pageid: string): Promise<{ message: string }> {
+export function deletePage(pageid: string): Promise<SuccessResponse> {
   return request({
     url: `api/${path}/${pageid}`,
     method: "delete",
@@ -70,10 +83,8 @@ export function deletePage(pageid: string): Promise<{ message: string }> {
 // 批量更新页面排序
 export function reorderPages(
   appid: string,
-  data: {
-    pageOrders: Array<{ pageid: string; order: number }>;
-  }
-): Promise<{ message: string }> {
+  data: PageReorderRequest
+): Promise<SuccessResponse> {
   return request({
     url: `api/${path}/app/${appid}/reorder`,
     method: "put",
@@ -81,38 +92,40 @@ export function reorderPages(
   });
 }
 
-// 页面管理相关的类型定义
-export interface PageComponent {
-  componentName: "DataManage" | "DataVisual" | "DataCard";
-  dataSourceId: string;
-  config?: Record<string, any>;
+// ==================== 工具函数 ====================
+
+/**
+ * 将API页面转换为基础页面类型
+ * 用于在业务逻辑中使用基础类型
+ */
+export function toBasePage(apiPage: ApiPageItem): PageCore {
+  const {
+    pageid,
+    appid,
+    status,
+    order,
+    creator,
+    createdAt,
+    updatedAt,
+    ...baseFields
+  } = apiPage;
+  return baseFields;
 }
 
-export interface PageItem {
-  pageid: string;
-  pageName: string;
-  description?: string;
-  appid: string;
-  components: PageComponent[];
-  status: "draft" | "published" | "archived";
-  order: number;
-  creator: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CreatePageRequest {
-  pageName: string;
-  description?: string;
-  appid: string;
-  components?: PageComponent[];
-  order?: number;
-}
-
-export interface UpdatePageRequest {
-  pageName?: string;
-  description?: string;
-  components?: PageComponent[];
-  order?: number;
-  status?: string;
+/**
+ * 将基础页面转换为创建请求
+ * 用于从基础类型创建API请求
+ */
+export function toCreateRequest(
+  basePage: PageCore,
+  appid: string,
+  additional?: Partial<CreatePageRequest>
+): CreatePageRequest {
+  return {
+    pageName: basePage.pageName,
+    description: basePage.description,
+    appid,
+    components: basePage.components,
+    ...additional,
+  };
 }

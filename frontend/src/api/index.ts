@@ -1,57 +1,89 @@
-// 统一导出所有API接口
-export * from "./app";
-export * from "./page";
-export * from "./dataSource";
+/**
+ * API接口统一导出
+ * 提供所有API接口函数和相关工具函数
+ */
 
-// 重新导出常用的接口和类型
+// ==================== 数据源相关API ====================
 export {
-  // 应用管理
-  getAppList,
-  createApp,
-  updateApp,
-  deleteApp,
-  cloneApp,
-  getAppInfo,
-  getAppFullData,
-  publishApp,
-  archiveApp,
-  type AppItem,
-  type CreateAppRequest,
-  type UpdateAppRequest,
-} from "./app";
-
-export {
-  // 页面管理
-  getAppPages,
-  createPage,
-  updatePage,
-  deletePage,
-  getPageInfo,
-  publishPage,
-  archivePage,
-  reorderPages,
-  type PageItem,
-  type PageComponent,
-  type CreatePageRequest,
-  type UpdatePageRequest,
-} from "./page";
-
-export {
-  // 数据源管理
   getAppDataSources,
+  getDataSourceInfo,
   createDataSource,
   updateDataSource,
-  deleteDataSource,
-  getDataSourceInfo,
   publishDataSource,
   archiveDataSource,
+  deleteDataSource,
   cloneDataSource,
   getDataSourceFields,
-  type DataSourceItem,
-  type FormField,
-  type CreateDataSourceRequest,
-  type UpdateDataSourceRequest,
-  type ValidationRule,
-  type FieldOption,
-  type FormFieldConfig,
+  validateRelation,
+  toBaseDataSource,
+  toCreateRequest as toDataSourceCreateRequest,
 } from "./dataSource";
+
+// ==================== 页面相关API ====================
+export {
+  getAppPages,
+  getPageInfo,
+  createPage,
+  updatePage,
+  publishPage,
+  archivePage,
+  deletePage,
+  reorderPages,
+  toBasePage,
+  toCreateRequest as toPageCreateRequest,
+} from "./page";
+
+// ==================== CRUD相关API ====================
+export {
+  getDataSourceConfig,
+  createRecord,
+  getRecordList,
+  getRecord,
+  updateRecord,
+  deleteRecord,
+  batchDeleteRecords,
+  getRecordStats,
+  getModelCacheInfo,
+  clearModelCache,
+} from "./crud";
+
+// ==================== 应用相关API ====================
+export * from "./app";
+
+// ==================== 类型重新导出 ====================
+// 从 types 目录重新导出常用的API类型
+
+export type {
+  // 数据源API类型
+  ApiDataSourceItem,
+  CreateDataSourceRequest,
+  UpdateDataSourceRequest,
+  DataSourceListResponse,
+  DataSourceDetailResponse,
+  DataSourceFieldsResponse,
+  RelationValidationResponse,
+
+  // 页面API类型
+  ApiPageItem,
+  CreatePageRequest,
+  UpdatePageRequest,
+  PageListResponse,
+  PageDetailResponse,
+  PageReorderRequest,
+  SuccessResponse,
+
+  // CRUD API类型
+  CrudResponse,
+  PaginationInfo,
+  CrudListResponse,
+  CrudRecordResponse,
+  CrudSuccessResponse,
+  CrudBatchDeleteResponse,
+  CrudStatsResponse,
+  CrudCacheInfoResponse,
+  CrudCacheClearResponse,
+  RecordQueryParams,
+  BatchDeleteRequest,
+  CacheClearRequest,
+  RecordData,
+} from "../types";

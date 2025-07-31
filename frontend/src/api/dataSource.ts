@@ -1,15 +1,30 @@
 import request from "../utils/request";
+import {
+  DataSourceCore,
+  RelationConfig,
+  ApiDataSourceItem,
+  CreateDataSourceRequest,
+  UpdateDataSourceRequest,
+  DataSourceListResponse,
+  DataSourceDetailResponse,
+  DataSourceFieldsResponse,
+  RelationValidationResponse,
+  EntityStatus,
+  DataSourceCategory,
+} from "../types";
 
 const path = "dataSourceManage";
+
+// ==================== API接口函数 ====================
 
 // 获取应用的所有数据源
 export function getAppDataSources(
   appid: string,
   params?: {
-    status?: string;
-    category?: string;
+    status?: EntityStatus;
+    category?: DataSourceCategory;
   }
-): Promise<DataSourceItem[]> {
+): Promise<DataSourceListResponse> {
   return request({
     url: `api/${path}/app/${appid}`,
     method: "get",
@@ -20,7 +35,7 @@ export function getAppDataSources(
 // 获取数据源详情
 export function getDataSourceInfo(
   datasourceid: string
-): Promise<DataSourceItem> {
+): Promise<DataSourceDetailResponse> {
   return request({
     url: `api/${path}/${datasourceid}`,
     method: "get",
@@ -30,7 +45,7 @@ export function getDataSourceInfo(
 // 创建新数据源
 export function createDataSource(
   data: CreateDataSourceRequest
-): Promise<DataSourceItem> {
+): Promise<ApiDataSourceItem> {
   return request({
     url: `api/${path}`,
     method: "post",
@@ -42,7 +57,7 @@ export function createDataSource(
 export function updateDataSource(
   datasourceid: string,
   data: UpdateDataSourceRequest
-): Promise<DataSourceItem> {
+): Promise<ApiDataSourceItem> {
   return request({
     url: `api/${path}/${datasourceid}`,
     method: "put",
@@ -53,7 +68,7 @@ export function updateDataSource(
 // 发布数据源
 export function publishDataSource(
   datasourceid: string
-): Promise<DataSourceItem> {
+): Promise<ApiDataSourceItem> {
   return request({
     url: `api/${path}/${datasourceid}/publish`,
     method: "post",
@@ -63,7 +78,7 @@ export function publishDataSource(
 // 归档数据源
 export function archiveDataSource(
   datasourceid: string
-): Promise<DataSourceItem> {
+): Promise<ApiDataSourceItem> {
   return request({
     url: `api/${path}/${datasourceid}/archive`,
     method: "post",
@@ -87,7 +102,7 @@ export function cloneDataSource(
     newTitle: string;
     targetAppid?: string;
   }
-): Promise<DataSourceItem> {
+): Promise<ApiDataSourceItem> {
   return request({
     url: `api/${path}/${datasourceid}/clone`,
     method: "post",
@@ -98,121 +113,60 @@ export function cloneDataSource(
 // 获取数据源的字段定义
 export function getDataSourceFields(
   datasourceid: string
-): Promise<FormField[]> {
+): Promise<DataSourceFieldsResponse> {
   return request({
     url: `api/${path}/${datasourceid}/fields`,
     method: "get",
   });
 }
 
-// 数据源管理相关的类型定义
-export interface ValidationRule {
-  required?: boolean;
-  min?: number;
-  max?: number;
-  minLength?: number;
-  maxLength?: number;
-  pattern?: string;
-  custom?: (value: any) => boolean | string;
-}
-
-export interface FieldOption {
-  value: string | number;
-  label: string;
-}
-
-export interface FormFieldConfig {
-  placeholder?: string;
-  step?: number;
-  options?: FieldOption[];
-  rows?: number;
-  suffix?: string;
-  default?: any;
-  disabled?: boolean;
-  readonly?: boolean;
-  visible?: boolean;
-}
-
-export interface ConditionalConfig {
-  field: string;
-  value: any;
-}
-
-export interface FormField {
-  name: string;
-  type: "string" | "number" | "boolean" | "date" | "array";
-  label: string;
-  control:
-    | "input"
-    | "number"
-    | "email"
-    | "tel"
-    | "textarea"
-    | "select"
-    | "radio"
-    | "checkbox"
-    | "date"
-    | "switch";
-  config?: FormFieldConfig;
-  validation?: ValidationRule;
-  dependencies?: string[];
-  conditional?: ConditionalConfig;
-  relation?: RelationConfig;
-}
-
-export interface DataSourceItem {
-  datasourceid: string;
-  title: string;
-  description?: string;
-  appid: string;
-  dataSource: FormField[];
-  version: string;
-  status: "draft" | "published" | "archived";
-  category: "form" | "table" | "chart" | "custom";
-  creator: string;
-  tags: string[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CreateDataSourceRequest {
-  title: string;
-  description?: string;
-  appid: string;
-  category?: "form" | "table" | "chart" | "custom";
-  dataSource?: FormField[];
-  tags?: string[];
-}
-
-export interface UpdateDataSourceRequest {
-  title?: string;
-  description?: string;
-  dataSource?: FormField[];
-  category?: string;
-  tags?: string[];
-}
-
-// 关联配置接口
-export interface RelationConfig {
-  type: "foreign" | "lookup" | "cascade";
-  targetDataSourceId: string;
-  targetField?: string;
-  targetValueField?: string;
-  filter?: Record<string, any>;
-  sort?: Record<string, any>;
-  searchable?: boolean;
-  searchFields?: string[];
-  paginated?: boolean;
-  pageSize?: number;
-}
-
 // 验证关联配置
 export function validateRelation(
   relation: RelationConfig
-): Promise<{ valid: boolean; error?: string; targetDataSource?: any }> {
+): Promise<RelationValidationResponse> {
   return request({
     url: "api/dataSourceManage/relation/validate",
     method: "post",
     data: { relation },
   });
+}
+
+// ==================== 工具函数 ====================
+
+/**
+ * 将API数据源转换为基础数据源类型
+ * 用于在业务逻辑中使用基础类型
+ */
+export function toBaseDataSource(
+  apiDataSource: ApiDataSourceItem
+): DataSourceCore {
+  const {
+    appid,
+    status,
+    category,
+    tags,
+    creator,
+    createdAt,
+    updatedAt,
+    ...baseFields
+  } = apiDataSource;
+  return baseFields;
+}
+
+/**
+ * 将基础数据源转换为创建请求
+ * 用于从基础类型创建API请求
+ */
+export function toCreateRequest(
+  baseDataSource: DataSourceCore,
+  appid: string,
+  additional?: Partial<CreateDataSourceRequest>
+): CreateDataSourceRequest {
+  return {
+    title: baseDataSource.title,
+    description: baseDataSource.description,
+    appid,
+    dataSource: baseDataSource.dataSource,
+    ...additional,
+  };
 }
