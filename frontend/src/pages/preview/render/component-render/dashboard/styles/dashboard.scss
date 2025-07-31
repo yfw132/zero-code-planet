@@ -1,0 +1,31 @@
+.dashboard-home {
+  padding: 24px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+// 卡片布局区域
+.dashboard-cards-section {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-cards-section {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-home {
+    padding: 16px;
+  }
+
+  .dashboard-cards-section {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

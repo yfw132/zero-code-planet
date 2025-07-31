@@ -1,0 +1,38 @@
+// ChartsSection特定样式
+.chart-section {
+  .header-actions {
+    :deep(.el-radio-group) {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 3px;
+      border: 1px solid #e9ecef;
+
+      .el-radio-button__inner {
+        border: none;
+        background: transparent;
+        color: #666;
+        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          color: #667eea;
+        }
+      }
+
+      .el-radio-button.is-active .el-radio-button__inner {
+        background: #667eea;
+        color: white;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+      }
+    }
+  }
+
+  .chart-container {
+    .chart {
+      width: 100%;
+      border-radius: 12px;
+    }
+  }
+} 

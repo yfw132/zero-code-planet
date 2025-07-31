@@ -1,0 +1,63 @@
+// 通用仪表板卡片样式 - 统一的悬浮效果
+.dashboard-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(240, 240, 240, 0.8);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    }
+  
+    // 不同类型卡片的特殊悬浮效果
+    &.dashboard-card--primary:hover {
+      box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+    }
+    
+    &.dashboard-card--secondary:hover {
+      box-shadow: 0 8px 32px rgba(79, 172, 254, 0.2);
+    }
+    
+    &.dashboard-card--success:hover {
+      box-shadow: 0 8px 32px rgba(67, 233, 123, 0.2);
+    }
+    
+    &.dashboard-card--info:hover {
+      box-shadow: 0 8px 32px rgba(240, 147, 251, 0.2);
+    }
+  }
+  
+  // 通用卡片头部样式
+  .dashboard-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  
+    h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.3px;
+    }
+  
+    .subtitle {
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+  
+    .header-left {
+      h3 {
+        font-size: 22px;
+        margin: 0 0 6px 0;
+      }
+    }
+  }

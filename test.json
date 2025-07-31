@@ -5,13 +5,14 @@
   "pages": [
     {
       "_id": "687ba70d9dbdae184426ad28",
-      "pageName": "客户概览",
-      "description": "展示客户基本信息、销售机会和跟进记录的概览",
+      "pageName": "仪表盘",
+      "description": "展示客户基本信息、销售机会和跟进记录的仪表盘",
       "components": [
         {
           "componentName": "Dashboard",
           "dataSourceId": "ds_01a163360039",
-          "_id": "687ba70d9dbdae184426ad29"
+          "_id": "687ba70d9dbdae184426ad29",
+          "config": {}
         }
       ],
       "appid": "app_546da0474625",
@@ -41,6 +42,26 @@
       "pageid": "page_8f65e312da81",
       "createdAt": "2025-07-19T14:09:17.623Z",
       "updatedAt": "2025-07-19T14:09:17.623Z",
+      "__v": 0
+    },
+    {
+      "_id": "687ba70d9dbdae184426ad36",
+      "pageName": "销售机会跟踪",
+      "description": "跟踪和管理潜在销售机会",
+      "components": [
+        {
+          "componentName": "DataManage",
+          "dataSourceId": "ds_1cb884c7fb45",
+          "_id": "687ba70d9dbdae184426ad37"
+        }
+      ],
+      "appid": "app_546da0474625",
+      "status": "draft",
+      "order": 3,
+      "creator": "system",
+      "pageid": "page_1044e9972c77",
+      "createdAt": "2025-07-19T14:09:17.793Z",
+      "updatedAt": "2025-07-19T14:09:17.793Z",
       "__v": 0
     },
     {

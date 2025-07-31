@@ -13,6 +13,7 @@
         v-if="item.componentName === 'Dashboard'"
         :key="item.dataSourceId"
         :dataSourceSchema="item.dataSourceSchema"
+        :app-schema="appSchema"
       />
       <DataCard
         v-if="item.componentName === 'DataCard'"
