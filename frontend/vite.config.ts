@@ -12,6 +12,9 @@ export default defineConfig({
       src: path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    port: 9000,
+  },
   // server: {
   //   proxy: {
   //    '/back': {
