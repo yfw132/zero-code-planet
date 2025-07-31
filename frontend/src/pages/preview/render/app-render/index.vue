@@ -84,12 +84,12 @@
                 :index="index.toString()"
               >
                 <el-icon>
-                  <Document v-if="page.pageName.includes('用户')" />
-                  <Shop v-else-if="page.pageName.includes('产品')" />
-                  <ShoppingCart v-else-if="page.pageName.includes('订单')" />
-                  <EditPen v-else-if="page.pageName.includes('文章')" />
-                  <Avatar v-else-if="page.pageName.includes('员工')" />
-                  <PieChart v-else />
+                  <PieChart v-if="index === 0" />
+                  <Shop v-else-if="index === 1" />
+                  <ShoppingCart v-else-if="index === 2" />
+                  <EditPen v-else-if="index === 3" />
+                  <Avatar v-else-if="index === 4" />
+                  <Document v-else />
                 </el-icon>
                 <template #title>{{ page.pageName }}</template>
               </el-menu-item>

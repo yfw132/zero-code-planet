@@ -113,7 +113,7 @@
           v-model:current-page="currentPage"
           v-model:page-size="pageSize"
           :page-sizes="[10, 20, 50, 100]"
-          :total="filteredData.length"
+          :total="totalCount"
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="onPageSizeChange"
           @current-change="onCurrentPageChange"
@@ -336,7 +336,21 @@ import {
   Warning,
 } from "@element-plus/icons-vue";
 
-import type { FormField, DataSourceItem } from "../../../types/dataSource";
+import type {
+  FormField,
+  DataSourceItem,
+} from "../../../../../types/dataSource";
+
+import {
+  getRecordList,
+  createRecord,
+  updateRecord,
+  deleteRecord,
+  type CrudResponse,
+  type CrudListResponse,
+  type CrudRecordResponse,
+  type CrudSuccessResponse,
+} from "../../../../../api/crud";
 
 // dataSourceSchema 是从父组件传递过来的参数
 const props = defineProps<{
@@ -362,6 +376,12 @@ const loading = ref(false);
 const searchQuery = ref("");
 const currentPage = ref(1);
 const pageSize = ref(10);
+const totalCount = ref(0);
+
+// 获取数据源ID
+const getDataSourceId = computed(() => {
+  return currentSchema.value.datasourceid;
+});
 
 // 计算属性
 const displayFields = computed(() => {
@@ -409,9 +429,7 @@ const filteredData = computed(() => {
 });
 
 const paginatedData = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value;
-  const end = start + pageSize.value;
-  return filteredData.value.slice(start, end);
+  return filteredData.value;
 });
 
 const formRules = computed(() => {
@@ -466,16 +484,17 @@ const formRules = computed(() => {
 const getCardTitle = (row: Record<string, any>): string => {
   // 根据不同的数据源类型，返回合适的标题
   const schema = currentSchema.value;
+  const dataSourceId = schema.datasourceid;
 
-  if (schema.id === "user") {
+  if (dataSourceId === "user") {
     return row.name || "未命名用户";
-  } else if (schema.id === "product") {
+  } else if (dataSourceId === "product") {
     return row.productName || "未命名产品";
-  } else if (schema.id === "order") {
+  } else if (dataSourceId === "order") {
     return row.orderNumber || "未命名订单";
-  } else if (schema.id === "article") {
+  } else if (dataSourceId === "article") {
     return row.title || "未命名文章";
-  } else if (schema.id === "employee") {
+  } else if (dataSourceId === "employee") {
     return row.fullName || "未命名员工";
   }
 
@@ -566,31 +585,35 @@ const handleSubmit = async () => {
   submitting.value = true;
 
   try {
-    // 模拟 API 调用
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    if (!getDataSourceId.value) {
+      throw new Error("数据源ID不存在");
+    }
 
     if (isEditing.value && editingItem.value) {
       // 更新现有项
-      const index = dataList.value.findIndex(
-        (item: Record<string, any>) => item === editingItem.value
+      const response = await updateRecord(
+        getDataSourceId.value,
+        editingItem.value._id,
+        formData
       );
-      if (index !== -1) {
-        dataList.value[index] = { ...formData };
-      }
-      ElMessage.success("数据更新成功！");
+
+      // 根据新的类型定义，如果到这里说明更新成功
+      ElMessage.success(response.message || "数据更新成功！");
+      await loadData(); // 重新加载数据
     } else {
       // 添加新项
-      const newItem = {
-        ...formData,
-        id: Date.now().toString(),
-      };
-      dataList.value.push(newItem);
-      ElMessage.success("数据添加成功！");
+      const response = await createRecord(getDataSourceId.value, formData);
+
+      // 根据新的类型定义，如果到这里说明创建成功
+      ElMessage.success(response.message || "数据添加成功！");
+      await loadData(); // 重新加载数据
     }
 
     closeModal();
   } catch (error) {
-    ElMessage.error("操作失败，请重试");
+    ElMessage.error(
+      error instanceof Error ? error.message : "操作失败，请重试"
+    );
     console.error("提交错误:", error);
   } finally {
     submitting.value = false;
@@ -607,14 +630,20 @@ const closeDeleteModal = () => {
   itemToDelete.value = null;
 };
 
-const confirmDelete = () => {
-  if (itemToDelete.value) {
-    const index = dataList.value.findIndex(
-      (item: Record<string, any>) => item === itemToDelete.value
-    );
-    if (index !== -1) {
-      dataList.value.splice(index, 1);
-      ElMessage.success("数据删除成功！");
+const confirmDelete = async () => {
+  if (itemToDelete.value && getDataSourceId.value) {
+    try {
+      const response = await deleteRecord(
+        getDataSourceId.value,
+        itemToDelete.value._id
+      );
+
+      // 根据新的类型定义，如果到这里说明删除成功
+      ElMessage.success(response.message || "数据删除成功！");
+      await loadData(); // 重新加载数据
+    } catch (error) {
+      ElMessage.error("删除失败，请重试");
+      console.error("删除错误:", error);
     }
   }
   closeDeleteModal();
@@ -669,268 +698,62 @@ const formatDateValue = (value: string): string => {
 const onPageSizeChange = (size: number) => {
   pageSize.value = size;
   currentPage.value = 1;
+  loadData();
 };
 
 const onCurrentPageChange = (page: number) => {
   currentPage.value = page;
+  loadData();
 };
 
-// 初始化测试数据
-const initTestData = () => {
-  const dataSourceId = currentSchema.value.id;
+// 加载数据列表
+const loadData = async () => {
+  if (!getDataSourceId.value) {
+    ElMessage.error("数据源ID不存在");
+    return;
+  }
 
-  switch (dataSourceId) {
-    case "user":
-      dataList.value = [
-        {
-          id: "1",
-          name: "张三",
-          age: 28,
-          email: "zhangsan@example.com",
-          phone: "13800138001",
-          gender: "male",
-          city: "beijing",
-          hobbies: ["reading", "music"],
-          birthday: "1995-06-15",
-          salary: 15000,
-          experience: "3-5",
-          introduction: "有丰富的前端开发经验",
-          agreement: true,
-          newsletter: false,
-        },
-        {
-          id: "2",
-          name: "李四",
-          age: 32,
-          email: "lisi@example.com",
-          phone: "13800138002",
-          gender: "female",
-          city: "shanghai",
-          hobbies: ["sports", "travel"],
-          birthday: "1991-03-20",
-          salary: 18000,
-          experience: "5-10",
-          introduction: "热爱技术，善于团队协作",
-          agreement: true,
-          newsletter: true,
-        },
-        {
-          id: "3",
-          name: "王五",
-          age: 25,
-          email: "wangwu@example.com",
-          phone: "13800138003",
-          gender: "male",
-          city: "guangzhou",
-          hobbies: ["photography", "gaming"],
-          birthday: "1998-09-10",
-          salary: 12000,
-          experience: "1-3",
-          introduction: "刚毕业的新人，学习能力强",
-          agreement: true,
-          newsletter: true,
-        },
-      ];
-      break;
+  loading.value = true;
+  try {
+    const params: any = {
+      page: currentPage.value,
+      limit: pageSize.value,
+    };
 
-    case "product":
-      dataList.value = [
-        {
-          id: "1",
-          productName: "iPhone 15 Pro",
-          productCode: "IP15P001",
-          category: "electronics",
-          price: 7999,
-          stock: 50,
-          brand: "Apple",
-          status: "active",
-          tags: ["new", "hot"],
-          description: "最新款iPhone，搭载A17 Pro芯片",
-          launchDate: "2023-09-22",
-          featured: true,
-        },
-        {
-          id: "2",
-          productName: "Nike Air Max 270",
-          productCode: "NKE270001",
-          category: "sports",
-          price: 899,
-          stock: 100,
-          brand: "Nike",
-          status: "active",
-          tags: ["hot", "recommend"],
-          description: "经典跑鞋，舒适透气",
-          launchDate: "2023-08-15",
-          featured: false,
-        },
-        {
-          id: "3",
-          productName: "编程珠玑",
-          productCode: "BK001",
-          category: "books",
-          price: 59,
-          stock: 200,
-          brand: "人民邮电出版社",
-          status: "active",
-          tags: ["recommend"],
-          description: "程序员必读经典书籍",
-          launchDate: "2023-07-01",
-          featured: true,
-        },
-      ];
-      break;
+    // 添加搜索条件
+    if (searchQuery.value) {
+      // 为所有字符串字段添加搜索条件
+      currentSchema.value.dataSource.forEach((field) => {
+        if (field.type === "string") {
+          params[field.name] = searchQuery.value;
+        }
+      });
+    }
 
-    case "order":
-      dataList.value = [
-        {
-          id: "1",
-          orderNumber: "ORD202312001",
-          customerName: "张三",
-          customerPhone: "13800138001",
-          totalAmount: 1999.0,
-          orderStatus: "delivered",
-          paymentMethod: "alipay",
-          shippingAddress: "北京市朝阳区xxx街道xxx号",
-          orderDate: "2023-12-01",
-          deliveryDate: "2023-12-03",
-          urgent: false,
-          notes: "请放在门口",
-        },
-        {
-          id: "2",
-          orderNumber: "ORD202312002",
-          customerName: "李四",
-          customerPhone: "13800138002",
-          totalAmount: 899.0,
-          orderStatus: "shipped",
-          paymentMethod: "wechat",
-          shippingAddress: "上海市浦东新区xxx路xxx号",
-          orderDate: "2023-12-02",
-          deliveryDate: "2023-12-04",
-          urgent: true,
-          notes: "加急订单",
-        },
-        {
-          id: "3",
-          orderNumber: "ORD202312003",
-          customerName: "王五",
-          customerPhone: "13800138003",
-          totalAmount: 59.0,
-          orderStatus: "paid",
-          paymentMethod: "bank",
-          shippingAddress: "广州市天河区xxx大道xxx号",
-          orderDate: "2023-12-03",
-          deliveryDate: "2023-12-05",
-          urgent: false,
-          notes: "",
-        },
-      ];
-      break;
+    const response = await getRecordList(getDataSourceId.value, params);
+    console.log(response);
 
-    case "article":
-      dataList.value = [
-        {
-          id: "1",
-          title: "Vue 3.0 新特性详解",
-          author: "张三",
-          category: "tech",
-          tags: ["trending", "tutorial"],
-          status: "published",
-          publishDate: "2023-12-01",
-          readTime: 15,
-          summary: "详细介绍Vue 3.0的新特性和改进",
-          content: "Vue 3.0带来了许多激动人心的新特性...",
-          featured: true,
-          allowComments: true,
-        },
-        {
-          id: "2",
-          title: "创业公司如何选择技术栈",
-          author: "李四",
-          category: "business",
-          tags: ["featured", "original"],
-          status: "published",
-          publishDate: "2023-11-28",
-          readTime: 20,
-          summary: "从技术和商业角度分析创业公司的技术选择",
-          content: "创业公司在选择技术栈时需要考虑多个因素...",
-          featured: false,
-          allowComments: true,
-        },
-        {
-          id: "3",
-          title: "北京美食探店指南",
-          author: "王五",
-          category: "food",
-          tags: ["trending"],
-          status: "draft",
-          publishDate: "",
-          readTime: 10,
-          summary: "推荐北京地道美食餐厅",
-          content: "北京作为历史悠久的城市，有着丰富的美食文化...",
-          featured: false,
-          allowComments: true,
-        },
-      ];
-      break;
-
-    case "employee":
-      dataList.value = [
-        {
-          id: "1",
-          employeeId: "EMP001",
-          fullName: "张三",
-          department: "tech",
-          position: "前端开发工程师",
-          level: "senior",
-          email: "zhangsan@company.com",
-          phone: "13800138001",
-          hireDate: "2021-03-15",
-          salary: 18000,
-          skills: ["javascript", "vue", "react"],
-          status: "active",
-          notes: "技术能力强，团队合作好",
-          remote: true,
-        },
-        {
-          id: "2",
-          employeeId: "EMP002",
-          fullName: "李四",
-          department: "product",
-          position: "产品经理",
-          level: "middle",
-          email: "lisi@company.com",
-          phone: "13800138002",
-          hireDate: "2022-01-10",
-          salary: 16000,
-          skills: ["python", "mysql"],
-          status: "active",
-          notes: "产品规划能力出色",
-          remote: false,
-        },
-        {
-          id: "3",
-          employeeId: "EMP003",
-          fullName: "王五",
-          department: "design",
-          position: "UI设计师",
-          level: "junior",
-          email: "wangwu@company.com",
-          phone: "13800138003",
-          hireDate: "2023-06-01",
-          salary: 12000,
-          skills: [],
-          status: "active",
-          notes: "设计作品有创意",
-          remote: false,
-        },
-      ];
-      break;
-
-    default:
-      dataList.value = [];
+    // 根据新的类型定义，response 直接就是 CrudListResponse
+    dataList.value = response.records;
+    totalCount.value = response.pagination.total;
+  } catch (error) {
+    ElMessage.error("加载数据失败");
+    console.error("加载数据错误:", error);
+  } finally {
+    loading.value = false;
   }
 };
+
+// 搜索处理
+const handleSearch = () => {
+  currentPage.value = 1;
+  loadData();
+};
+
+// 监听搜索变化
+watch(searchQuery, () => {
+  handleSearch();
+});
 
 // 监听数据源变化
 watch(
@@ -939,17 +762,11 @@ watch(
     if (newSchema) {
       currentSchema.value = newSchema;
       initFormData();
-      initTestData();
+      loadData();
     }
   },
   { immediate: true }
 );
-
-// 组件挂载时初始化
-onMounted(() => {
-  initFormData();
-  initTestData();
-});
 </script>
 
 <style scoped lang="scss">

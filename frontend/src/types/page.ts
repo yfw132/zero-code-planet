@@ -25,7 +25,6 @@ export interface PageComponentDetail extends PageComponent {
 // 页面配置接口
 export interface PageItem {
   pageName: string;
-  pageid: string;
   description: string;
   components: PageComponent[];
 }

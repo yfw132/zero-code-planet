@@ -26,7 +26,6 @@ const appSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       default: generateAppId, // 自动生成唯一ID
-      index: true, // 添加索引以提高查询性能
     },
     description: {
       type: String,

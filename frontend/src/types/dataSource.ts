@@ -85,6 +85,23 @@ export interface ConditionalConfig {
 }
 
 /**
+ * 关联配置接口
+ * 定义字段与其他数据源的关联关系
+ */
+export interface RelationConfig {
+  type: "foreign" | "lookup" | "cascade"; // 关联类型
+  targetDataSourceId: string; // 目标数据源ID
+  targetField?: string; // 用于显示的字段名
+  targetValueField?: string; // 用于值的字段名
+  filter?: Record<string, any>; // 过滤条件
+  sort?: Record<string, any>; // 排序条件
+  searchable?: boolean; // 是否支持搜索
+  searchFields?: string[]; // 搜索字段数组
+  paginated?: boolean; // 是否支持分页
+  pageSize?: number; // 每页数量
+}
+
+/**
  * 表单字段完整定义接口
  * 继承基础配置，添加字段基本信息
  */
@@ -97,6 +114,7 @@ export interface FormField {
   validation?: ValidationRule; // 验证规则
   dependencies?: string[]; // 依赖的其他字段
   conditional?: ConditionalConfig; // 条件显示配置
+  relation?: RelationConfig; // 关联配置
 }
 
 // ==================== 数据源定义 ====================
@@ -106,7 +124,7 @@ export interface FormField {
  * 定义单个数据源的完整结构
  */
 export interface DataSourceItem {
-  id: string; // 唯一标识符
+  datasourceid: string; // 数据源ID
   title: string; // 标题
   description: string; // 描述
   dataSource: FormField[]; // 字段列表

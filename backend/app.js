@@ -13,6 +13,7 @@ var indexRouter = require("./routes/index");
 var appManageRouter = require("./routes/appManage");
 var pageManageRouter = require("./routes/pageManage");
 var dataSourceManageRouter = require("./routes/dataSourceManage");
+var appCrudRouter = require("./routes/appCrud");
 
 var app = express();
 
@@ -48,6 +49,7 @@ app.use("/", indexRouter);
 app.use("/api/appManage", appManageRouter);
 app.use("/api/pageManage", pageManageRouter);
 app.use("/api/dataSourceManage", dataSourceManageRouter);
+app.use("/api/crud", appCrudRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
