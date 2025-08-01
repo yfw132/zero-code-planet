@@ -7,7 +7,7 @@
     <div class="dashboard-cards-section">
       <!-- 左侧：核心业务指标和数据趋势 -->
       <div style="display: flex; flex-direction: column; gap: 24px">
-        <MetricsCards :mock-data="mockData" />
+        <MetricsCards :app-schema="props.appSchema" />
         <ChartsSection ref="chartsSectionRef" />
       </div>
       <!-- 右侧：快速访问和运营概览 -->
@@ -21,9 +21,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from "vue";
-import type { DataSourceItem } from "@/types/frontend";
+import type { PageComponentDetail } from "@/types/frontend";
 import type { AppFullData } from "@/api/app";
-import { getMockData } from "./mock";
 
 // 导入dashboard组件
 import WelcomeBanner from "./components/WelcomeBanner.vue";
@@ -34,13 +33,12 @@ import OperationalOverview from "./components/OperationalOverview.vue";
 
 // Props定义
 const props = defineProps<{
-  dataSourceSchema: DataSourceItem;
   appSchema: AppFullData;
+  schema: PageComponentDetail;
 }>();
 
 // 响应式数据
 const loading = ref(false);
-const mockData = ref<any[]>([]);
 
 // 子组件引用
 const chartsSectionRef = ref();
@@ -49,20 +47,8 @@ const dataOverviewRef = ref();
 const operationalOverviewRef = ref();
 
 // 方法
-const loadData = async () => {
-  loading.value = true;
-  try {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    mockData.value = getMockData(props.dataSourceSchema.datasourceid);
-  } catch (error) {
-    console.error("加载数据失败:", error);
-  } finally {
-    loading.value = false;
-  }
-};
-
 const refreshData = () => {
-  loadData();
+  // 刷新数据时重新初始化所有图表
   nextTick(() => {
     initCharts();
   });
@@ -82,13 +68,15 @@ const initCharts = () => {
 // 生命周期
 onMounted(async () => {
   try {
-    await loadData();
+    loading.value = true;
     await nextTick();
     setTimeout(() => {
       initCharts();
     }, 100);
   } catch (error) {
     console.error("组件初始化失败:", error);
+  } finally {
+    loading.value = false;
   }
 });
 </script>

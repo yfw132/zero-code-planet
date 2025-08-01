@@ -33,7 +33,7 @@ const chartInstances = ref<Record<string, echarts.ECharts>>({});
 
 // 快速统计数据
 const quickStats = ref([
-  { id: "pv", label: "页面浏览量", value: "12,847" },
+  { id: "pv", label: "浏览量", value: "12,847" },
   { id: "uv", label: "独立访客", value: "3,241" },
   { id: "bounce", label: "跳出率", value: "23.6%" },
   { id: "duration", label: "平均停留", value: "4m32s" },

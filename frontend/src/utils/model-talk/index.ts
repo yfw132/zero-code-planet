@@ -18,8 +18,9 @@ import type { DataSourceSchema } from "@/types/dataSource";
 export interface AppConfig {
   appName: string;
   description: string;
-  dataSourceCount?: number;
-  pageCount?: number;
+  dataSourceCount?: number | string;
+  pageCount?: number | string;
+  mockDataCount?: number | string;
 }
 
 export interface GeneratedAppResult {
@@ -307,10 +308,10 @@ export class AppGenerator {
 
   /**
    * 生成并插入mock数据（合并操作）
-   * @param recordCount 每个数据源的记录数量，默认10条
+   * @param config 应用配置信息
    * @returns 插入的记录统计信息
    */
-  async generateAndInsertMockData(recordCount: number = 10): Promise<{
+  async generateAndInsertMockData(config: AppConfig): Promise<{
     totalRecords: number;
     dataSourceStats: Array<{
       datasourceid: string;
@@ -335,7 +336,7 @@ export class AppGenerator {
       // 1. 生成mock数据
       const mockDataSchema = await generateMockData({
         dataSourceSchema: this.dataSources as DataSourceSchema,
-        recordCount: recordCount,
+        recordCount: config.mockDataCount || 10,
       });
 
       console.log("生成的mock数据:", mockDataSchema);

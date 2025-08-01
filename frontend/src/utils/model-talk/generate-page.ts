@@ -64,7 +64,7 @@ ${dataSourceInfo}
 3. 组件列表（components），每个组件包含：
    - name: 组件名称（英文，驼峰命名）
    - label: 显示标签（中文）
-   - componentName: 组件类型（DataManage/DataCard）
+   - componentName: 组件类型（Dashboard/DataManage/DataCard）
    - dataSourceId: 关联的数据源ID（在可用数据源中用【】包裹起来的部分）
    - config: 组件配置（可选）
 
@@ -94,8 +94,9 @@ ${dataSourceInfo}
 3. 确保dataSourceId与提供的数据源ID匹配
 4. 页面数量控制在${pageCount}个
 5. 确保返回的是有效的JSON格式
-6. 第一个页面通常是主页，包含主要功能
-7. 后续页面可以是数据管理、数据分析等专业页面`;
+6. 一般一个页面只有一个组件
+7. 第一个页面通常是主页，包含主要功能(一般为Dashboard组件)
+8. 后续页面可以是数据管理、数据分析等专业页面(一般一个数据源对应一个页面)`;
 }
 
 // 将模型返回的string处理成JSON

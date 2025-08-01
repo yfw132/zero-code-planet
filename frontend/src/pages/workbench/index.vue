@@ -439,8 +439,9 @@ const generateProject = async () => {
       appName: projectName.value,
       description:
         projectDescription.value || `AI生成的${projectName.value}项目`,
-      dataSourceCount: 6,
-      pageCount: 6,
+      dataSourceCount: 4,
+      pageCount: 5,
+      mockDataCount: "3-5",
     };
     const newApp = new AppGenerator();
 
@@ -461,7 +462,7 @@ const generateProject = async () => {
 
     // 步骤4: 生成并插入mock数据
     currentStep.value = 4;
-    await newApp.generateAndInsertMockData(10); // 每个数据源生成10条mock数据
+    await newApp.generateAndInsertMockData(appConfig); // 每个数据源生成10条mock数据
 
     // 步骤5: 完成
     currentStep.value = 5;

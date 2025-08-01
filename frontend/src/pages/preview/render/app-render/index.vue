@@ -157,7 +157,7 @@ import { ElMessage } from "element-plus";
 
 import PageRender from "../page-render/index.vue";
 import { DEFAULT_APP_ID, DEFAULT_PAGE_ID } from "../../test";
-import testAppSchema from "../../../../../../test.json";
+// import testAppSchema from "../../../../../../test.json";
 import { getAppFullData, type AppFullData } from "@/api/app";
 
 const route = useRoute();
@@ -309,7 +309,8 @@ const loadAppData = async () => {
     error.value = null;
 
     const appId = (route.params.appId as string) || DEFAULT_APP_ID;
-    const data = (testAppSchema as any) || (await getAppFullData(appId));
+    // const data = (testAppSchema as any) || (await getAppFullData(appId));
+    const data = await getAppFullData(appId);
     appSchema.value = data;
   } catch (err) {
     error.value = err instanceof Error ? err.message : "加载应用数据失败";

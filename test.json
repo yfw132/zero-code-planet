@@ -11,8 +11,7 @@
         {
           "componentName": "Dashboard",
           "dataSourceId": "ds_01a163360039",
-          "_id": "687ba70d9dbdae184426ad29",
-          "config": {}
+          "_id": "687ba70d9dbdae184426ad29"
         }
       ],
       "appid": "app_546da0474625",

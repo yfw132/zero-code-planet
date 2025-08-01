@@ -33,7 +33,7 @@ const pageSchema = new mongoose.Schema(
           componentName: {
             type: String,
             required: true,
-            enum: ["DataManage", "DataVisual", "DataCard"],
+            enum: ["DataManage", "Dashboard", "DataCard"],
           },
           dataSourceId: {
             type: String,
